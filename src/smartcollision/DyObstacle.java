@@ -10,8 +10,8 @@ public class DyObstacle {
     public DyObstacle(double x, double y, double s, double c){
         this.x = x;
         this.y = y;
-        if(s > 20) 
-            this.s = 20;
+        if(s > 30) 
+            this.s = 30;
         else 
             this.s = s;
         this.c = c;
@@ -29,7 +29,7 @@ public class DyObstacle {
             case 2 : return y;
             case 3 : return s;
             case 4 : return c;
-            default : return 0;
+            default : return 0;//error
         }
     }
     

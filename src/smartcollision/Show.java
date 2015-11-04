@@ -12,6 +12,8 @@ public class Show extends javax.swing.JPanel {
     double mousex, mousey;
     double oldx, oldy, newx, newy;
     
+    double delMx, delMy;
+    
     public Show(Ship ship, DyObstacle obstacle) {//fresh adjust is null!!!!!
         this.ship = ship;
         this.obstacle = obstacle;
@@ -133,6 +135,9 @@ public class Show extends javax.swing.JPanel {
             }
         });
         addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 formMousePressed(evt);
             }
@@ -207,44 +212,71 @@ public class Show extends javax.swing.JPanel {
     
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
         // TODO add your handling code here:
-        oldx = evt.getX();
-        oldy = evt.getY();
+        if(evt.getModifiers()==16){
+            oldx = evt.getX();
+            oldy = evt.getY();
+        }
     }//GEN-LAST:event_formMousePressed
     
     private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
         // TODO add your handling code here:
-        newx = evt.getX();
-        newy = evt.getY();
-        
-        double differentx = newx - oldx;
-        double differenty = newy - oldy;
-        double speed = Math.sqrt(Math.pow(differentx, 2) + Math.pow(differenty, 2))/10;
-        double course = 0;
-        int adjust = 0;//switch case///
-        
-        if(differentx == 0 && differenty == 0) adjust = 0;
-        else if(differentx >= 0 && differenty <0) adjust = 1;
-        else if(differentx < 0 && differenty <= 0) adjust = 2;
-        else if(differentx <= 0 && differenty > 0) adjust = 3;
-        else if(differentx > 0 && differenty >= 0) adjust = 4;
-        
-        switch(adjust){
-            case 0 : course = 0; break;
-            case 1 : course = 450 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
-            case 2 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
-            case 3 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
-            case 4 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
+        if(evt.getModifiers()==16){
+            newx = evt.getX();
+            newy = evt.getY();
+
+            double differentx = newx - oldx;
+            double differenty = newy - oldy;
+            double speed = Math.sqrt(Math.pow(differentx, 2) + Math.pow(differenty, 2))/10;
+            double course = 0;
+            int adjust = 0;//switch case///
+
+            if(differentx == 0 && differenty == 0) adjust = 0;
+            else if(differentx >= 0 && differenty <0) adjust = 1;
+            else if(differentx < 0 && differenty <= 0) adjust = 2;
+            else if(differentx <= 0 && differenty > 0) adjust = 3;
+            else if(differentx > 0 && differenty >= 0) adjust = 4;
+
+            switch(adjust){
+                case 0 : course = 0; break;
+                case 1 : course = 450 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
+                case 2 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
+                case 3 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
+                case 4 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
+            }
+
+            while (course<0||course>=360) {
+                if(course<0) course+=360;
+                if(course>=360) course-=360;
+            }
+
+            DyObstacle newobs = new DyObstacle(oldx, oldy, speed, course);
+            DataBase.obstacle.add(newobs);
         }
-        
-        while (course<0||course>=360) {
-            if(course<0) course+=360;
-            if(course>=360) course-=360;
-        }
-        
-        DyObstacle newobs = new DyObstacle(oldx, oldy, speed, course);
-        DataBase.obstacle.add(newobs);
-        
     }//GEN-LAST:event_formMouseReleased
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+        delMx = evt.getX();
+        delMy = evt.getY();
+        double disx, disy;
+        double temp;
+        
+        if(evt.getModifiers()==4){
+            if(evt.getClickCount() >= 2)
+                DataBase.obstacle.clear();
+            else{
+                for(DyObstacle o : DataBase.obstacle){
+                    disx = Math.abs(delMx-o.getParameter(1));
+                    disy = Math.abs(delMy-o.getParameter(2));
+                    temp = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));//distance
+                    if(temp <= 10)
+                        DataBase.obstacle.remove(o);
+                }
+            }
+        }
+        if(evt.getModifiers()==8);
+            //create a new ship;
+    }//GEN-LAST:event_formMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Clear;

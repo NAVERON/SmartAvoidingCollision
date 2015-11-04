@@ -17,7 +17,7 @@ public class SmartCollision extends JFrame{
         Show show = new Show(ship, obstacle);
         show.repaint();
         
-        frame.setSize(1024, 730);
+        frame.setSize(0x400, 0x2da);
         frame.add(show);
         frame.setTitle("ONE STEP V2");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -30,7 +30,7 @@ public class SmartCollision extends JFrame{
                 o.goAhead();
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException ex) {
                 Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
             }
