@@ -14,7 +14,6 @@ public class DataBase {
     public static int dirpointradius = 10;
     public static int obstacleradius = 10;
     //flags
-    public static boolean fresh = false;//setup for fresh
     public static boolean begin = false;
     public static boolean pause = false;//fresh kontrol
     public static boolean clear = false;//clear the panel

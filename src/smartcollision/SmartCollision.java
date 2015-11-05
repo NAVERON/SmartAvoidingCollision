@@ -20,26 +20,27 @@ public class SmartCollision extends JFrame{
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
         
-        while(!DataBase.begin){//end the game and clear panel
-            while(!DataBase.pause){//for pause and rest for a minutes
-                while (!DataBase.fresh) {//beginfresh graphics and repaint
+        while(!DataBase.clear){//end the game and clear panel
+            while(!DataBase.begin){//reset new parameter
+                while (!DataBase.pause) {//for pause and rest for a minutes
                     show.repaint();
                     for(Ship b: DataBase.ships){
-                        b.goAhead();
+                        if(!DataBase.pause)
+                            b.goAhead();
                     }
                     for(DyObstacle o : DataBase.obstacle){
                         o.goAhead();
                     }
-
+                    
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(100);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                 }
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
                 }
