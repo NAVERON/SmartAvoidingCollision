@@ -9,14 +9,18 @@ public class DataBase {
     public static double defaultx = 300, defaulty = 400, defaults = 8, defaultc = 40;
     
     public static ArrayList<DyObstacle> obstacle = new ArrayList<>();//should clear count if count is too large
+    public static ArrayList<Ship> ships = new ArrayList<>();
     
     public static int dirpointradius = 10;
     public static int obstacleradius = 10;
     //flags
-    public static int danger;//flag of ship is danger
-    
+    public static boolean fresh = false;//setup for fresh
+    public static boolean begin = false;
+    public static boolean pause = false;//fresh kontrol
+    public static boolean clear = false;//clear the panel
     
     /***************************************************************************/
     //caculate area
+    
     
 }

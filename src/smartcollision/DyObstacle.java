@@ -4,14 +4,14 @@ package smartcollision;
 public class DyObstacle {
     private double x, y, s, c;
     
-    double stepx, stepy;
-    double c2r;
+    private double stepx, stepy;
+    private double c2r;
     
     public DyObstacle(double x, double y, double s, double c){
         this.x = x;
         this.y = y;
-        if(s > 30) 
-            this.s = 30;
+        if(s > 20) 
+            this.s = 20;
         else 
             this.s = s;
         this.c = c;

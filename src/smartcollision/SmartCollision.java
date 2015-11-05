@@ -9,46 +9,69 @@ public class SmartCollision extends JFrame{
     
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        Ship ship =new Ship(DataBase.defaultx, DataBase.defaulty, 
-                DataBase.defaults, DataBase.defaultc);
-        DyObstacle obstacle = new DyObstacle(DataBase.defaultx, DataBase.defaulty,
-                DataBase.defaults, DataBase.defaultc);
         
-        Show show = new Show(ship, obstacle);
-        show.repaint();
+        Show show = new Show();
+        show.repaint();//initialing
         
+        //setup frame and add panel
         frame.setSize(0x400, 0x2da);
         frame.add(show);
         frame.setTitle("ONE STEP V2");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
         
-        while (true) { //temp for debug and has a direct view          
-            show.repaint();
-            ship.goAhead();
-            for(DyObstacle o : DataBase.obstacle){
-                o.goAhead();
-            }
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-        }
-    }
-    
-    
-    public class freshshow implements Runnable{
+        while(!DataBase.begin){//end the game and clear panel
+            while(!DataBase.pause){//for pause and rest for a minutes
+                while (!DataBase.fresh) {//beginfresh graphics and repaint
+                    show.repaint();
+                    for(Ship b: DataBase.ships){
+                        b.goAhead();
+                    }
+                    for(DyObstacle o : DataBase.obstacle){
+                        o.goAhead();
+                    }
 
-        Thread freshThread;
-        public freshshow() {
-            
-        }
-        
-        @Override
-        public void run(){
-            
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
     }
+    
+    public void action(){
+        //action to avoid collision
+    }
+    
+//    //for try
+//    public class freshShow implements Runnable{
+//        Thread freshThread;
+//        
+//        public freshShow() {
+//            freshThread = new Thread(this, ""tt);
+//            freshThread.start();
+//        }
+//        
+//        @Override
+//        public void run(){
+//            while(!DataBase.begin){//begin flags
+//                
+//                show.repaint();
+//                ship.goAhead();
+//                try {
+//                    Thread.sleep(200);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//        }
+//    }
 }

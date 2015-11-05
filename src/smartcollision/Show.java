@@ -3,24 +3,26 @@ package smartcollision;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.util.Iterator;
 
-public class Show extends javax.swing.JPanel {
+public class Show extends javax.swing.JPanel{
     
-    public Ship ship;
-    public DyObstacle obstacle;
-    double PI = Math.PI;
-    double mousex, mousey;
-    double oldx, oldy, newx, newy;
+    private double PI = Math.PI;
+    private double mousex, mousey;
+    private double oldx, oldy, newx, newy;
     
-    double delMx, delMy;
+    private double delMx, delMy;
+    private double begin = 0;
     
-    public Show(Ship ship, DyObstacle obstacle) {//fresh adjust is null!!!!!
-        this.ship = ship;
-        this.obstacle = obstacle;
+    public Show() {
         initComponents();
     }
     
     public void paintSpeed(Graphics g) {//speed limit : 0-20
+        if(DataBase.ships.isEmpty())
+            return;
+        Ship ship = DataBase.ships.get(0);
         double paintSpeed = ship.getParameter(3) * 5;
         int basepointx = 105 - (int)paintSpeed;
         int basepointy = 105 - (int)paintSpeed;
@@ -38,6 +40,9 @@ public class Show extends javax.swing.JPanel {
     }
     
     public void paintCourse(Graphics g) {
+        if(DataBase.ships.isEmpty())
+            return;
+        Ship ship = DataBase.ships.get(0);
         double paintCourse = Math.toRadians(ship.getParameter(4));
         //take it caution
         double basepointx = 105 + (100-DataBase.dirpointradius)*Math.sin(paintCourse) - DataBase.dirpointradius;
@@ -50,28 +55,34 @@ public class Show extends javax.swing.JPanel {
     
     public void paintShip(Graphics g){
         g.setColor(Color.BLACK);
-        double x = ship.getParameter(1);
-        double y = ship.getParameter(2);
-        double s = ship.getParameter(3);
-        double c = Math.toRadians(ship.getParameter(4));
+        double x, y, s, c;
+        int linestartx, linestarty, lineendx, lineendy;
         
-        int linestartx = (int)(x + 30*Math.sin(c));
-        int linestarty = (int)(y - 30*Math.cos(c));
-        int lineendx = (int) (linestartx + s*Math.sin(c));
-        int lineendy = (int) (linestarty - s*Math.cos(c));
-        
-        int[] trianglex = {linestartx, (int)(x + 10*Math.sin(c+PI/2)), 
-            (int)(x + 10*Math.sin(c+3*PI/2))};
-        int[] triangley = {linestarty, (int)(y - 10*Math.cos(c+PI/2)), 
-            (int)(y - 10*Math.cos(c+3*PI/2))};
-        //drawbody and courseline
-        g.drawPolygon(trianglex, triangley, 3);
-        g.drawLine(linestartx, linestarty, lineendx, lineendy);
+        for(Ship b : DataBase.ships){
+            x = b.getParameter(1);
+            y = b.getParameter(2);
+            s = b.getParameter(3);
+            c = Math.toRadians(b.getParameter(4));
+            
+            linestartx = (int)(x + 30*Math.sin(c));
+            linestarty = (int)(y - 30*Math.cos(c));
+            lineendx = (int) (linestartx + s*Math.sin(c));
+            lineendy = (int) (linestarty - s*Math.cos(c));
+            
+            int[] trianglex = {linestartx, (int)(x + 10*Math.sin(c+PI/2)), 
+                (int)(x + 10*Math.sin(c+3*PI/2))};
+            int[] triangley = {linestarty, (int)(y - 10*Math.cos(c+PI/2)), 
+                (int)(y - 10*Math.cos(c+3*PI/2))};
+            //drawbody and courseline
+            g.drawPolygon(trianglex, triangley, 3);
+            g.drawLine(linestartx, linestarty, lineendx, lineendy);
+        }
     }
     
     public void paintObstacle(Graphics g){
         double startx, starty, endx, endy;
         double speed, course;
+        g.setColor(Color.BLACK);
         
         for(DyObstacle o : DataBase.obstacle){
             startx = o.getParameter(1);
@@ -79,6 +90,7 @@ public class Show extends javax.swing.JPanel {
             speed = o.getParameter(3);
             course = Math.toRadians(o.getParameter(4));
             //drawbody
+            
             g.drawRoundRect((int)(startx-DataBase.obstacleradius), (int)(starty-DataBase.obstacleradius), 
                     2*DataBase.obstacleradius, 2*DataBase.obstacleradius, 5, 5);
             
@@ -99,17 +111,16 @@ public class Show extends javax.swing.JPanel {
         g.drawString(mousex + "," + mousey, 820, 680);//position 820,  680
         if(true)//adjust for show danger
             g.setColor(new Color(152, 245, 255, 50));//background
-        else 
+        else
             g.setColor(Color.GRAY);
         g.fillOval(5, 5, 200, 200);
-        
         paintCourse(g);
         paintSpeed(g);
         paintShip(g);
         paintObstacle(g);
         
+        Show.this.requestFocus();
     }
-    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -135,14 +146,19 @@ public class Show extends javax.swing.JPanel {
             }
         });
         addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 formMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 formMouseReleased(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                formKeyTyped(evt);
             }
         });
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -223,7 +239,7 @@ public class Show extends javax.swing.JPanel {
         if(evt.getModifiers()==16){
             newx = evt.getX();
             newy = evt.getY();
-
+            
             double differentx = newx - oldx;
             double differenty = newy - oldy;
             double speed = Math.sqrt(Math.pow(differentx, 2) + Math.pow(differenty, 2))/10;
@@ -243,7 +259,7 @@ public class Show extends javax.swing.JPanel {
                 case 3 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
                 case 4 : course = 90 - Math.toDegrees(Math.atan2(-differenty, differentx)); break;
             }
-
+            
             while (course<0||course>=360) {
                 if(course<0) course+=360;
                 if(course>=360) course-=360;
@@ -259,24 +275,43 @@ public class Show extends javax.swing.JPanel {
         delMx = evt.getX();
         delMy = evt.getY();
         double disx, disy;
-        double temp;
+        double dis;
+        DyObstacle o;
         
         if(evt.getModifiers()==4){
-            if(evt.getClickCount() >= 2)
+            if(evt.getClickCount() == 2)
                 DataBase.obstacle.clear();
             else{
-                for(DyObstacle o : DataBase.obstacle){
+                Iterator<DyObstacle> it = DataBase.obstacle.iterator();
+                while(it.hasNext()){
+                    o = it.next();
                     disx = Math.abs(delMx-o.getParameter(1));
                     disy = Math.abs(delMy-o.getParameter(2));
-                    temp = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));//distance
-                    if(temp <= 10)
-                        DataBase.obstacle.remove(o);
+                    dis = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));//distance
+                    if(dis <= 10)
+                        it.remove();//delete the last returned//
                 }
             }
         }
-        if(evt.getModifiers()==8);
-            //create a new ship;
+        if(evt.getModifiers()==8){
+            double t = begin%2;
+            if(t==0){
+                DataBase.begin = true;
+                begin++;
+            }
+            else{
+                DataBase.begin = false;
+                begin--;
+            }
+        }
     }//GEN-LAST:event_formMouseClicked
+
+    private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_0){
+            System.out.println("hahahahahahaha");
+        }
+    }//GEN-LAST:event_formKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Clear;
