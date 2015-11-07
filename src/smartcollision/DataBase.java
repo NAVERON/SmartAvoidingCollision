@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class DataBase {
     
-    //default x, y, s, c    store objects
-    public static double defaultx = 300, defaulty = 400, defaults = 8, defaultc = 40;
+    //default x, y, s, c    store objects and ships
+    public static double defaultx = 300, defaulty = 400, defaults = 8, defaultc = 0, linecourse = 30;
     
     public static ArrayList<DyObstacle> obstacle = new ArrayList<>();//should clear count if count is too large
     public static ArrayList<Ship> ships = new ArrayList<>();
