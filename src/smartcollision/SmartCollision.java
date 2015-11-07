@@ -75,4 +75,8 @@ public class SmartCollision extends JFrame{
 //            }
 //        }
 //    }
+    
+    //problems
+    //1. input start and end point has some bugs, need analyse words
+    //2. 
 }

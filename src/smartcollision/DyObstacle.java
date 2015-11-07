@@ -33,12 +33,16 @@ public class DyObstacle {
         }
     }
     
-    public void goAhead(){
+    public void goAhead(){//position, course, speed test
         c2r = Math.toRadians(c);
         stepx = s*Math.sin(c2r);
         stepy = s*Math.cos(c2r);
         x+=stepx;
         y-=stepy;
+        if(x<1) x = 1024;
+        if(x>1024) x = 1;
+        if(y<0) y = 800;
+        if(y>800) y = 0;
     }
     
     
