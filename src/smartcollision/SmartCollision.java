@@ -14,15 +14,15 @@ public class SmartCollision extends JFrame{
         show.repaint();//initialing
         
         //setup frame and add panel
-        frame.setSize(0x400, 0x2da);
+        frame.setSize(1100, 730);
         frame.add(show);
         frame.setTitle("ONE STEP V2");
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
         
-        while(!DataBase.clear){//end the game and clear panel
-            while(!DataBase.begin){//reset new parameter
-                while (!DataBase.pause) {//for pause and rest for a minutes
+        while(!DataBase.begin){//end the game and clear panel
+            while(!DataBase.clear){//reset new parameter
+                while (!DataBase.pause){//for pause and rest for a minutes
                     show.repaint();
                     for(Ship b: DataBase.ships){
                         if(!DataBase.pause)
@@ -52,7 +52,6 @@ public class SmartCollision extends JFrame{
         //action to avoid collision
     }
     
-//    //for try
 //    public class freshShow implements Runnable{
 //        Thread freshThread;
 //        

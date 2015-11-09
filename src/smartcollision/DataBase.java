@@ -15,9 +15,9 @@ public class DataBase {
     public static int obstacleradius = 10;
     //flags
     public static boolean begin = false;
-    public static boolean pause = false;//fresh kontrol
-    public static boolean clear = false;//clear the panel
-    
+    public static boolean clear = false;
+    public static boolean pause = false;//clear the panel
+    public static boolean danger = false;
     /***************************************************************************/
     //caculate area
     
