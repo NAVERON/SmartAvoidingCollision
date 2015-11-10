@@ -1,6 +1,8 @@
 
 package smartcollision;
 
+import java.awt.Point;
+
 public class Ship {
     private double x , y, s, c;
     
@@ -49,13 +51,17 @@ public class Ship {
         
         if(this.s<0||this.s>20) System.err.println("speed out of limits!!");
     }
-    
+    Point p;
     public void goAhead(){//position, course, speed test
         c2r = Math.toRadians(c);
         stepx = s*Math.sin(c2r);
         stepy = s*Math.cos(c2r);
         x+=stepx;
         y-=stepy;
+        if(!DataBase.tracklock){
+            p = new Point((int)x, (int)y);
+            DataBase.shipstrack.add(p);
+        }
         if(x<1) x = 1100;
         if(x>1100) x = 1;
         if(y<0) y = 800;

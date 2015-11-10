@@ -7,29 +7,29 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Iterator;
-import java.util.Scanner;
 
 public class Show extends javax.swing.JPanel{
     
     private Ship ship = new Ship();
     private double PI = Math.PI;
     private double mousex, mousey;
-    private double oldx, oldy, newx, newy;
+    private double newx, newy;
     
     private double delMx, delMy;
-    int count =0;
     private Graphics g;
+    int pause = 0;
+    int tracklock = 0;
     Point s = null, e = null;
     String str = "'Left Click' create obstacle ,'Q' create ships, 'Right Click' to Delete";
     
     public Show() {
         initComponents();
+        Show.this.requestFocus();
     }
     
     public void paintSpeed(Graphics g) {//speed limit : 0-20
-        if(DataBase.ships.isEmpty())
-            return;
-        Ship shipget = DataBase.ships.get(DataBase.ships.size()-1);
+        if(DataBase.ships.isEmpty()) return;
+        Ship shipget = DataBase.ships.getLast();
         double paintSpeed = shipget.getParameter(3)*5;
         int basepointx = 105 - (int)paintSpeed;
         int basepointy = 105 - (int)paintSpeed;
@@ -54,7 +54,7 @@ public class Show extends javax.swing.JPanel{
     public void paintCourse(Graphics g) {
         if(DataBase.ships.isEmpty())
             return;
-        Ship shipget = DataBase.ships.get(DataBase.ships.size()-1);
+        Ship shipget = DataBase.ships.getLast();
         double paintCourse = Math.toRadians(shipget.getParameter(4));
         //take it caution
         double basepointx = 105 + (100-DataBase.dirpointradius)*Math.sin(paintCourse) - DataBase.dirpointradius;
@@ -67,28 +67,31 @@ public class Show extends javax.swing.JPanel{
     
     public void paintShips(Graphics g){
         g.setColor(Color.BLACK);
-        double x, y, s, c;
+        double x, y, speed, c;
         int linestartx, linestarty, lineendx, lineendy;
         
         for(Ship b : DataBase.ships){
             x = b.getParameter(1);
             y = b.getParameter(2);
-            s = b.getParameter(3);
+            speed = b.getParameter(3);
             c = Math.toRadians(b.getParameter(4));
             
             linestartx = (int)(x + 30*Math.sin(c));
             linestarty = (int)(y - 30*Math.cos(c));
-            lineendx = (int) (linestartx + s*Math.sin(c));
-            lineendy = (int) (linestarty - s*Math.cos(c));
+            lineendx = (int) (linestartx + speed*Math.sin(c));
+            lineendy = (int) (linestarty - speed*Math.cos(c));
             
             int[] trianglex = {linestartx, (int)(x + 10*Math.sin(c+PI/2)), 
                 (int)(x + 10*Math.sin(c+3*PI/2))};
             int[] triangley = {linestarty, (int)(y - 10*Math.cos(c+PI/2)), 
                 (int)(y - 10*Math.cos(c+3*PI/2))};
             //drawbody and courseline
-            if(b == DataBase.ships.get(DataBase.ships.size()-1)) g.setColor(Color.RED);
+            if(b == DataBase.ships.getLast()) g.setColor(Color.RED);
             g.drawPolygon(trianglex, triangley, 3);
             g.drawLine(linestartx, linestarty, lineendx, lineendy);
+        }
+        for(Point p: DataBase.shipstrack){
+            g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
         }
     }
     
@@ -119,8 +122,12 @@ public class Show extends javax.swing.JPanel{
         if(s!=null && e!=null){
             g.setColor(Color.MAGENTA);
             g.fillRect((int)s.getX(), (int)s.getY(), 20, 20);
-            g.setColor(Color.LIGHT_GRAY);
+            g.drawString(s.getX() + "::" + s.getY(), (int)s.getX(), (int)(s.getY()-5));
+            
+            g.setColor(Color.GRAY);
             g.fillRect((int)e.getX(), (int)e.getY(), 20, 20);
+            g.drawString(e.getX()+"::"+e.getY(), (int)(e.getX()-100), (int)(e.getY()-5));
+            
             g.setColor(Color.PINK);
             g.drawLine((int)s.getX()+10, (int)s.getY()+10, (int)e.getX()+10, (int)e.getY()+10);
         }
@@ -129,8 +136,7 @@ public class Show extends javax.swing.JPanel{
         //500,680
         g.setColor(Color.BLACK);
         g.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
-        //if(Show.this.isFocusOwner()) str = "'Left Click' to create obstacle ,press 'Q' to create ships";
-        g.drawString(str, 500, 680);
+        g.drawString(str, 200, 680);
     }
     
     @Override
@@ -141,7 +147,7 @@ public class Show extends javax.swing.JPanel{
         this.g = g;//letout for paint
         
         g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
-        g.drawString(mousex + "," + mousey, 30, 680);//position 820,  680
+        g.drawString(mousex + " , " + mousey, 20, 680);//position 820,  680
         
         if(!DataBase.danger)//adjust for show danger
             g.setColor(new Color(152, 245, 255, 90));//background
@@ -159,9 +165,6 @@ public class Show extends javax.swing.JPanel{
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
-        End_pt = new javax.swing.JTextField();
-        Start_pt = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), null));
@@ -197,41 +200,6 @@ public class Show extends javax.swing.JPanel{
             }
         });
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        End_pt.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
-        End_pt.setText("Input end pt");
-        End_pt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        End_pt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                End_ptFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                End_ptFocusLost(evt);
-            }
-        });
-        End_pt.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                End_ptKeyPressed(evt);
-            }
-        });
-        add(End_pt, new org.netbeans.lib.awtextra.AbsoluteConstraints(345, 660, 125, 30));
-
-        Start_pt.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
-        Start_pt.setText("Input start pt");
-        Start_pt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        Start_pt.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        Start_pt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                Start_ptFocusGained(evt);
-            }
-        });
-        Start_pt.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                Start_ptKeyPressed(evt);
-            }
-        });
-        add(Start_pt, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 660, 125, 30));
-        Start_pt.getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
     
     private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
@@ -243,9 +211,11 @@ public class Show extends javax.swing.JPanel{
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
         // TODO add your handling code here:
         if(evt.getModifiers()==16){
-            oldx = evt.getX();
-            oldy = evt.getY();
             str = "Drag to Create Moving obstacles";
+        }
+        if(evt.getModifiers()==8){
+            str = "Start Point, Drag to Eng Point";
+            s = new Point(evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_formMousePressed
     
@@ -255,14 +225,19 @@ public class Show extends javax.swing.JPanel{
             newx = evt.getX();
             newy = evt.getY();
             
-            double course = caculateratio(oldx, oldy, newx, newy);
-            double differentx = newx - oldx;
-            double differenty = newy - oldy;
+            double course = CaculateRatio(mousex, mousey, newx, newy);
+            double differentx = newx - mousex;
+            double differenty = newy - mousey;
             double speed = Math.sqrt(Math.pow(differentx, 2) + Math.pow(differenty, 2))/10;
             
-            DyObstacle newobs = new DyObstacle(oldx, oldy, speed, course);
+            DyObstacle newobs = new DyObstacle(mousex, mousey, speed, course);
             DataBase.obstacle.add(newobs);
             str = "A Obstacle Exist";
+        }
+        if(evt.getModifiers()==8){
+            e = new Point(evt.getX(), evt.getY());
+            DataBase.linecourse = CaculateRatio(s.getX(), s.getY(), e.getX(), e.getY());
+            str = "A Voyage Exist";
         }
     }//GEN-LAST:event_formMouseReleased
     
@@ -279,6 +254,7 @@ public class Show extends javax.swing.JPanel{
             if(evt.getClickCount() == 2){
                 DataBase.obstacle.clear();
                 DataBase.ships.clear();
+                DataBase.shipstrack.clear();
                 str = "Delete All Ships & Obstacles";
             }
             else{
@@ -306,11 +282,11 @@ public class Show extends javax.swing.JPanel{
                 }
             }
         }
-        if(evt.getModifiers()==8){//for other function
-        }
     }//GEN-LAST:event_formMouseClicked
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        //switch-case
+        
         if(evt.getKeyCode() == KeyEvent.VK_L){//delete line
             s = null;
             e = null;
@@ -320,7 +296,7 @@ public class Show extends javax.swing.JPanel{
             str = "Here has 0 ships";
             return;
         }
-        ship = DataBase.ships.get(DataBase.ships.size()-1);
+        ship = DataBase.ships.getLast();
         if(evt.getKeyCode() == KeyEvent.VK_UP){
             str = "Speed Up";
             ship.giveValue(3, ship.getParameter(3)+0.5);
@@ -338,17 +314,29 @@ public class Show extends javax.swing.JPanel{
             ship.giveValue(4, ship.getParameter(4)+1);
         }
         if(evt.getKeyCode() == KeyEvent.VK_SPACE){
-            if(count == 0){
+            if(pause == 0){
                 str = "Pause";
                 printString(g);
                 repaint();
                 DataBase.pause = true;
-                count++;
+                pause++;
             }
             else{
                 str = "Play";
                 DataBase.pause = false;
-                count--;
+                pause--;
+            }
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_T){
+            if(tracklock == 0){
+                DataBase.tracklock = true;
+                str = "Track Locked";
+                tracklock++;
+            }
+            else{
+                DataBase.tracklock = false;
+                str = "Track Opened";
+                tracklock--;
             }
         }
     }//GEN-LAST:event_formKeyPressed
@@ -362,47 +350,11 @@ public class Show extends javax.swing.JPanel{
             str = "You Create a Ship";
         }
     }//GEN-LAST:event_formKeyReleased
-
-    private void Start_ptFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_Start_ptFocusGained
-        // TODO add your handling code here:
-        Start_pt.setText("");
-        str = "Style: 'number, number', Press 'Enter' Input Next Point";
-    }//GEN-LAST:event_Start_ptFocusGained
-    
-    private void End_ptFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_End_ptFocusGained
-        // TODO add your handling code here:
-        End_pt.setText("");
-        str = "Style: 'number, number', Press 'Enter' Achive Input";
-    }//GEN-LAST:event_End_ptFocusGained
-
-    private void End_ptFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_End_ptFocusLost
-        // TODO add your handling code here:
-        Start_pt.setText("input start pt");
-        End_pt.setText("input end pt");
-        str = "A Voyage Exist";
-    }//GEN-LAST:event_End_ptFocusLost
-    
-    private void Start_ptKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Start_ptKeyPressed
-        // TODO add your handling code here:
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
-            End_pt.requestFocus();
-        }
-    }//GEN-LAST:event_Start_ptKeyPressed
-    
-    private void End_ptKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_End_ptKeyPressed
-        // TODO add your handling code here:
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER && Start_pt.getText().length()>0 && End_pt.getText().length()>0){
-            splidwords();
-            Show.this.requestFocus();
-        }
-    }//GEN-LAST:event_End_ptKeyPressed
-        
+                    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField End_pt;
-    private javax.swing.JTextField Start_pt;
     // End of variables declaration//GEN-END:variables
     
-    public double caculateratio(double x1, double y1, double x2, double y2){
+    public double CaculateRatio(double x1, double y1, double x2, double y2){
         double differentx = x2 - x1;
         double differenty = y2 - y1;
         //double speed = Math.sqrt(Math.pow(differentx, 2) + Math.pow(differenty, 2))/10;
@@ -428,32 +380,6 @@ public class Show extends javax.swing.JPanel{
             if(course>=360) course-=360;
         }
         return course;
-    }
-    
-    public void splidwords(){
-        int start[] = new int[2], end[] = new int[2], i = 0;
-        
-        //start input
-        Scanner sc = new Scanner(Start_pt.getText());
-        sc.useDelimiter(",");
-        while(sc.hasNext()){
-            if(sc.hasNextInt())
-                start[i++] = sc.nextInt();
-        }
-        
-        //end input
-        i = 0;//reset important 
-        sc = new Scanner(End_pt.getText());
-        sc.useDelimiter(",");
-        while(sc.hasNext()){
-            if(sc.hasNextInt())
-                end[i++] = sc.nextInt();
-        }
-        //then set retio
-        double course = caculateratio(start[0], start[1], end[0], end[1]);
-        DataBase.linecourse = course;
-        s =new Point(start[0], start[1]);
-        e =new Point(end[0], end[1]);
     }
     
 }

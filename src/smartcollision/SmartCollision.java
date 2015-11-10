@@ -1,6 +1,7 @@
 
 package smartcollision;
 
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -9,6 +10,7 @@ public class SmartCollision extends JFrame{
     
     public static void main(String[] args) {
         JFrame frame = new JFrame();
+        SmartCollision smartCollision = new SmartCollision();
         
         Show show = new Show();
         show.repaint();//initialing
@@ -25,12 +27,13 @@ public class SmartCollision extends JFrame{
                 while (!DataBase.pause){//for pause and rest for a minutes
                     show.repaint();
                     for(Ship b: DataBase.ships){
-                        if(!DataBase.pause)
-                            b.goAhead();
+                        b.goAhead();
                     }
                     for(DyObstacle o : DataBase.obstacle){
                         o.goAhead();
                     }
+                    
+                    smartCollision.action();
                     
                     try {
                         Thread.sleep(100);
@@ -48,8 +51,34 @@ public class SmartCollision extends JFrame{
         }
     }
     
+    LinkedList<DyObstacle> tt = new LinkedList<>();
     public void action(){
         //action to avoid collision
+        for(Ship b: DataBase.ships){
+            analyse(b);
+//            for(int i=0;i<tt.size();i++)
+//                System.out.println(tt.get(i));
+        }
+    }
+    
+    public void analyse(Ship ship){
+        //store ship's distance
+        for(DyObstacle o: DataBase.obstacle){
+            double temp = distance(ship, o);
+            if(temp<=200) tt.add(o);
+        }
+        if(tt.isEmpty())
+            DataBase.distance.add(null);
+        else
+            DataBase.distance.add(tt);
+    }
+    
+    public double distance(Ship ship, DyObstacle obstacle){
+        double shipx = ship.getParameter(1);
+        double shipy = ship.getParameter(2);
+        double obstaclex = obstacle.getParameter(1);
+        double obstacley = obstacle.getParameter(2);
+        return Math.sqrt(Math.pow(obstaclex-shipx, 2)+Math.pow(obstaclex-shipx, 2));
     }
     
 //    public class freshShow implements Runnable{
