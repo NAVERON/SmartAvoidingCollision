@@ -33,7 +33,7 @@ public class SmartCollision extends JFrame{
                         o.goAhead();
                     }
                     
-                    smartCollision.action();
+                    smartCollision.Action();
                     
                     try {
                         Thread.sleep(100);
@@ -43,7 +43,7 @@ public class SmartCollision extends JFrame{
 
                 }
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -52,33 +52,31 @@ public class SmartCollision extends JFrame{
     }
     
     LinkedList<DyObstacle> tt = new LinkedList<>();
-    public void action(){
+    public void Action(){
         //action to avoid collision
-        for(Ship b: DataBase.ships){
-            analyse(b);
-//            for(int i=0;i<tt.size();i++)
-//                System.out.println(tt.get(i));
-        }
+        
     }
     
-    public void analyse(Ship ship){
-        //store ship's distance
-        for(DyObstacle o: DataBase.obstacle){
-            double temp = distance(ship, o);
-            if(temp<=200) tt.add(o);
+    public void stored(){//先判断方位，后判断距离，按船舶尺度划分，
+        //danger area add to arealist
+        for(int i =0 ;i < DataBase.ships.size();i++){
+            double tx = DataBase.ships.get(i).getParameter(1);
+            double ty = DataBase.ships.get(i).getParameter(2);
+            for(DyObstacle o : DataBase.obstacle){
+                if(Math.abs(tx-o.getParameter(1)) <200&&Math.abs(ty-o.getParameter(2))<200)
+                    DataBase.area.get(i).add(o);
+            }
         }
-        if(tt.isEmpty())
-            DataBase.distance.add(null);
-        else
-            DataBase.distance.add(tt);
-    }
-    
-    public double distance(Ship ship, DyObstacle obstacle){
-        double shipx = ship.getParameter(1);
-        double shipy = ship.getParameter(2);
-        double obstaclex = obstacle.getParameter(1);
-        double obstacley = obstacle.getParameter(2);
-        return Math.sqrt(Math.pow(obstaclex-shipx, 2)+Math.pow(obstaclex-shipx, 2));
+        //situation danger, vector store
+        DyObstacle o;
+        for(int i = 0;i < DataBase.area.size();i++){
+            for(int j =0;j < DataBase.area.get(i).size();j++){
+                o = DataBase.area.get(i).get(j);
+                
+            }
+        }
+        //test and remove safe obstacle
+        
     }
     
 //    public class freshShow implements Runnable{

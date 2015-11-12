@@ -58,12 +58,12 @@ public class Ship {
         stepy = s*Math.cos(c2r);
         x+=stepx;
         y-=stepy;
-        if(!DataBase.tracklock){
+        if(DataBase.tracklock){
             p = new Point((int)x, (int)y);
             DataBase.shipstrack.add(p);
         }
-        if(x<1) x = 1100;
-        if(x>1100) x = 1;
+        if(x<0) x = 1120;
+        if(x>1120) x = 0;
         if(y<0) y = 800;
         if(y>800) y = 0;
     }

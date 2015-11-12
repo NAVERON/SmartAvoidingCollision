@@ -12,11 +12,12 @@ public class Show extends javax.swing.JPanel{
     
     private Ship ship = new Ship();
     private double PI = Math.PI;
+    private Graphics g;
+    
     private double mousex, mousey;
     private double newx, newy;
-    
     private double delMx, delMy;
-    private Graphics g;
+    
     int pause = 0;
     int tracklock = 0;
     Point s = null, e = null;
@@ -24,7 +25,6 @@ public class Show extends javax.swing.JPanel{
     
     public Show() {
         initComponents();
-        Show.this.requestFocus();
     }
     
     public void paintSpeed(Graphics g) {//speed limit : 0-20
@@ -64,12 +64,13 @@ public class Show extends javax.swing.JPanel{
         g.fillOval((int)basepointx, (int)basepointy, 2 * DataBase.dirpointradius, 2 * DataBase.dirpointradius);
         
     }
-    
+    Point p;
     public void paintShips(Graphics g){
         g.setColor(Color.BLACK);
         double x, y, speed, c;
         int linestartx, linestarty, lineendx, lineendy;
-        
+        //////////////////////////////////////////////////////////////////////
+        if(DataBase.ships.size()<=0) return;
         for(Ship b : DataBase.ships){
             x = b.getParameter(1);
             y = b.getParameter(2);
@@ -90,8 +91,13 @@ public class Show extends javax.swing.JPanel{
             g.drawPolygon(trianglex, triangley, 3);
             g.drawLine(linestartx, linestarty, lineendx, lineendy);
         }
-        for(Point p: DataBase.shipstrack){
+        //if full, clear all points
+        if(DataBase.shipstrack.size() > 10000) {DataBase.shipstrack.clear(); return;}
+        Iterator<Point> pt = DataBase.shipstrack.iterator();
+        while(pt.hasNext()){
+            p = pt.next();
             g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
+            
         }
     }
     
@@ -145,7 +151,6 @@ public class Show extends javax.swing.JPanel{
         //background first(depend on adjust) , speed and course
         
         this.g = g;//letout for paint
-        
         g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
         g.drawString(mousex + " , " + mousey, 20, 680);//position 820,  680
         
@@ -154,6 +159,7 @@ public class Show extends javax.swing.JPanel{
         else
             g.setColor(new Color(255, 0, 0, 90));
         g.fillOval(5, 5, 200, 200);
+        
         printString(g);
         paintSpeed(g);
         paintCourse(g);
@@ -174,7 +180,7 @@ public class Show extends javax.swing.JPanel{
         setMinimumSize(new java.awt.Dimension(100, 100));
         setName("Show"); // NOI18N
         setNextFocusableComponent(this);
-        setPreferredSize(new java.awt.Dimension(1024, 700));
+        setPreferredSize(new java.awt.Dimension(1100, 700));
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 formMouseMoved(evt);
@@ -292,27 +298,6 @@ public class Show extends javax.swing.JPanel{
             e = null;
             str = "Clear Voyage";
         }
-        if(DataBase.ships.isEmpty()){
-            str = "Here has 0 ships";
-            return;
-        }
-        ship = DataBase.ships.getLast();
-        if(evt.getKeyCode() == KeyEvent.VK_UP){
-            str = "Speed Up";
-            ship.giveValue(3, ship.getParameter(3)+0.5);
-        }
-        if(evt.getKeyCode() == KeyEvent.VK_DOWN){
-            str = "Speed Down";
-            ship.giveValue(3, ship.getParameter(3)-0.5);
-        }
-        if(evt.getKeyCode() == KeyEvent.VK_LEFT){
-            str = "Turning Left";
-            ship.giveValue(4, ship.getParameter(4)-1);
-        }
-        if(evt.getKeyCode() == KeyEvent.VK_RIGHT){
-            str = "Turning Right";
-            ship.giveValue(4, ship.getParameter(4)+1);
-        }
         if(evt.getKeyCode() == KeyEvent.VK_SPACE){
             if(pause == 0){
                 str = "Pause";
@@ -327,15 +312,38 @@ public class Show extends javax.swing.JPanel{
                 pause--;
             }
         }
+        /**************************************/
+        if(DataBase.ships.isEmpty()){
+            return;
+        }
+        
+        ship = DataBase.ships.getLast();
+        if(evt.getKeyCode() == KeyEvent.VK_UP){
+            str = "Speed Up";
+            ship.giveValue(3, ship.getParameter(3)+1);
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_DOWN){
+            str = "Speed Down";
+            ship.giveValue(3, ship.getParameter(3)-1);
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_LEFT){
+            str = "Turning Left";
+            ship.giveValue(4, ship.getParameter(4)-1);
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_RIGHT){
+            str = "Turning Right";
+            ship.giveValue(4, ship.getParameter(4)+1);
+        }
+        
         if(evt.getKeyCode() == KeyEvent.VK_T){
             if(tracklock == 0){
                 DataBase.tracklock = true;
-                str = "Track Locked";
+                str = "Track Opened";
                 tracklock++;
             }
             else{
                 DataBase.tracklock = false;
-                str = "Track Opened";
+                str = "Track Locked";
                 tracklock--;
             }
         }

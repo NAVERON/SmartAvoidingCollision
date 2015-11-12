@@ -8,7 +8,7 @@ import java.util.LinkedList;
 public class DataBase {
     
     //default x, y, s, c    store objects and ships
-    public static double defaultx = 300, defaulty = 400, defaults = 3, defaultc = 0, linecourse = 30;
+    public static double defaultx = 300, defaulty = 400, defaults = 5, defaultc = 0, linecourse = 30;
     
     public static LinkedList<DyObstacle> obstacle = new LinkedList<>();
     public static LinkedList<Ship> ships = new LinkedList<>();
@@ -24,6 +24,11 @@ public class DataBase {
     public static boolean danger = false;
     
     /**********************************caculate area*****************************************/
-    public static ArrayList<LinkedList<DyObstacle>> distance = new ArrayList<>();
+    public class Struct{
+        double length;//speed
+        double direction;//course
+    }
+    public static ArrayList<LinkedList<DyObstacle>> area = new ArrayList<>();
+    public static ArrayList<Struct> vector = new ArrayList<>();
     
 }
