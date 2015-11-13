@@ -1,8 +1,12 @@
 
 package smartcollision;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
 public class DyObstacle {
     private double x, y, s, c;
+    public ArrayList<Point> obstacleTrack = new ArrayList<>();
     
     private double stepx, stepy;
     private double c2r;
@@ -23,8 +27,8 @@ public class DyObstacle {
         this.s = DataBase.defaultc;
     }
     
-    public double getParameter(int a){
-        switch (a){
+    public double getParameter(int index){
+        switch (index){
             case 1 : return x;
             case 2 : return y;
             case 3 : return s;
@@ -39,6 +43,9 @@ public class DyObstacle {
         stepy = s*Math.cos(c2r);
         x+=stepx;
         y-=stepy;
+        
+        obstacleTrack.add(new Point((int)x, (int)y));
+        
         if(x<0) x = 1120;
         if(x>1120) x = 0;
         if(y<0) y = 800;

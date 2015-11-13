@@ -13,7 +13,7 @@ public class SmartCollision extends JFrame{
         SmartCollision smartCollision = new SmartCollision();
         
         Show show = new Show();
-        show.repaint();//initialing
+        //show.repaint();//initialing
         
         //setup frame and add panel
         frame.setSize(1100, 730);
@@ -32,7 +32,7 @@ public class SmartCollision extends JFrame{
                     for(DyObstacle o : DataBase.obstacle){
                         o.goAhead();
                     }
-                    
+                    //analyse
                     smartCollision.Action();
                     
                     try {
@@ -40,10 +40,10 @@ public class SmartCollision extends JFrame{
                     } catch (InterruptedException ex) {
                         Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                    
                 }
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -51,30 +51,26 @@ public class SmartCollision extends JFrame{
         }
     }
     
-    LinkedList<DyObstacle> tt = new LinkedList<>();
+    
     public void Action(){
         //action to avoid collision
         
     }
     
-    public void stored(){//先判断方位，后判断距离，按船舶尺度划分，
+    LinkedList<DyObstacle> tt = new LinkedList<>();
+    public void stored(){
         //danger area add to arealist
-        for(int i =0 ;i < DataBase.ships.size();i++){
-            double tx = DataBase.ships.get(i).getParameter(1);
-            double ty = DataBase.ships.get(i).getParameter(2);
-            for(DyObstacle o : DataBase.obstacle){
-                if(Math.abs(tx-o.getParameter(1)) <200&&Math.abs(ty-o.getParameter(2))<200)
-                    DataBase.area.get(i).add(o);
+        for(Ship boat: DataBase.ships){//analyse danger links of every ship
+            double bx = boat.getParameter(1);
+            double by = boat.getParameter(2);
+            for(DyObstacle obs : DataBase.obstacle){
+                if(Math.abs(bx-obs.getParameter(1)) <200 && Math.abs(by-obs.getParameter(2))<200)
+                    boat.dangerList.add(obs);
             }
+            //situation danger, vector store, select frome arealist
+            
         }
-        //situation danger, vector store
-        DyObstacle o;
-        for(int i = 0;i < DataBase.area.size();i++){
-            for(int j =0;j < DataBase.area.get(i).size();j++){
-                o = DataBase.area.get(i).get(j);
-                
-            }
-        }
+        
         //test and remove safe obstacle
         
     }
@@ -102,7 +98,4 @@ public class SmartCollision extends JFrame{
 //        }
 //    }
     
-    //problems
-    //1. input start and end point has some bugs, need analyse words
-    //2. 
 }

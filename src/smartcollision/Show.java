@@ -64,13 +64,12 @@ public class Show extends javax.swing.JPanel{
         g.fillOval((int)basepointx, (int)basepointy, 2 * DataBase.dirpointradius, 2 * DataBase.dirpointradius);
         
     }
-    Point p;
+    
     public void paintShips(Graphics g){
         g.setColor(Color.BLACK);
         double x, y, speed, c;
         int linestartx, linestarty, lineendx, lineendy;
         //////////////////////////////////////////////////////////////////////
-        if(DataBase.ships.size()<=0) return;
         for(Ship b : DataBase.ships){
             x = b.getParameter(1);
             y = b.getParameter(2);
@@ -91,13 +90,19 @@ public class Show extends javax.swing.JPanel{
             g.drawPolygon(trianglex, triangley, 3);
             g.drawLine(linestartx, linestarty, lineendx, lineendy);
         }
+        
+    }
+    
+    public void paintTrack(){
         //if full, clear all points
-        if(DataBase.shipstrack.size() > 10000) {DataBase.shipstrack.clear(); return;}
-        Iterator<Point> pt = DataBase.shipstrack.iterator();
-        while(pt.hasNext()){
-            p = pt.next();
-            g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
-            
+        for(Ship boat: DataBase.ships){
+            for(Point p: boat.shipTrack)
+                g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
+        }
+        //can change color to aeparate
+        for(DyObstacle obstacle: DataBase.obstacle){
+            for(Point p: obstacle.obstacleTrack)
+                g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
         }
     }
     
@@ -165,6 +170,8 @@ public class Show extends javax.swing.JPanel{
         paintCourse(g);
         paintShips(g);
         paintObstacle(g);
+        if(!DataBase.tracklock)
+            paintTrack();
         paintLine(g);
     }
     
@@ -260,7 +267,12 @@ public class Show extends javax.swing.JPanel{
             if(evt.getClickCount() == 2){
                 DataBase.obstacle.clear();
                 DataBase.ships.clear();
-                DataBase.shipstrack.clear();
+                for (Ship boat:DataBase.ships) {
+                    boat.shipTrack.clear();
+                }
+                for (DyObstacle obs : DataBase.obstacle) {
+                    obs.obstacleTrack.clear();
+                }
                 str = "Delete All Ships & Obstacles";
             }
             else{
@@ -283,6 +295,8 @@ public class Show extends javax.swing.JPanel{
                     dis = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));
                     if(dis <= 10){
                         str = "Delete a Ship";
+                        //如果移除船舶需要移除分析链表
+                        //能否改变船舶类的变量，增加危险分析链表，挂接在船舶数据中，实现同步操作
                         sh.remove();
                     }
                 }
