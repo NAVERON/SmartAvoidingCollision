@@ -43,7 +43,8 @@ public class DyObstacle {
         stepy = s*Math.cos(c2r);
         x+=stepx;
         y-=stepy;
-        
+        if(obstacleTrack.size()>10000)
+            obstacleTrack.clear();
         obstacleTrack.add(new Point((int)x, (int)y));
         
         if(x<0) x = 1120;

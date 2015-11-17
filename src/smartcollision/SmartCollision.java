@@ -1,7 +1,7 @@
 
 package smartcollision;
 
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -10,10 +10,9 @@ public class SmartCollision extends JFrame{
     
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        SmartCollision smartCollision = new SmartCollision();
-        
         Show show = new Show();
-        //show.repaint();//initialing
+        SmartCollision smartCollision = new SmartCollision();
+        //initialing
         
         //setup frame and add panel
         frame.setSize(1100, 730);
@@ -28,9 +27,6 @@ public class SmartCollision extends JFrame{
                     show.repaint();
                     for(Ship b: DataBase.ships){
                         b.goAhead();
-                    }
-                    for(DyObstacle o : DataBase.obstacle){
-                        o.goAhead();
                     }
                     //analyse
                     smartCollision.Action();
@@ -51,28 +47,68 @@ public class SmartCollision extends JFrame{
         }
     }
     
+    //DataBase db= new DataBase();
     
     public void Action(){
         //action to avoid collision
-        
+        analyse();
+        //Action and reset
+        for(Ship dyship: DataBase.ships){
+            if(dyship.Action == 3){
+                dyship.giveValue(4, dyship.getParameter(4)+2);
+                dyship.Action = 0;
+            }
+        }
+        remove();
     }
     
-    LinkedList<DyObstacle> tt = new LinkedList<>();
-    public void stored(){
+    public void analyse(){//need return flag signal
         //danger area add to arealist
-        for(Ship boat: DataBase.ships){//analyse danger links of every ship
-            double bx = boat.getParameter(1);
-            double by = boat.getParameter(2);
-            for(DyObstacle obs : DataBase.obstacle){
-                if(Math.abs(bx-obs.getParameter(1)) <200 && Math.abs(by-obs.getParameter(2))<200)
-                    boat.dangerList.add(obs);
+        for(Ship boat: DataBase.ships){//distance analyse
+            for(Ship ship: DataBase.ships){
+                if(boat!=ship){
+                    if(Math.abs(boat.getParameter(1)-ship.getParameter(1))<100&&
+                            Math.abs(boat.getParameter(2)-ship.getParameter(2))<100){
+                        boat.dangerList.add(ship);
+                    }
+                }
+            }//analyse every ships and add to danger list
+            for(int i = 0;i<boat.dangerList.size();i++){
+                Ship ship = boat.dangerList.get(i);
+                double boatx = boat.getParameter(1);//anaship information
+                double boaty = boat.getParameter(2);
+                double bc = boat.getParameter(4);
+                //get relation position
+                double shipx = ship.getParameter(1);//other ship information
+                double shipy = ship.getParameter(2);
+                double rc = DataBase.CaculateRatio(boatx, boaty, shipx, shipy);
+                double rp = rc - bc;//relation position
+                if(rp>180) rp = rp - 360;//port - // starboard + //limit 0-180
+                if(rp<-180) rp = 360 + rp;
+                boat.sychronize.add(rp);
+                System.out.println(rp);
+                if(rp>0) boat.Action =3;
             }
-            //situation danger, vector store, select frome arealist
             
         }
         
-        //test and remove safe obstacle
-        
+    }
+    
+    public void remove(){
+        //remove safe objects
+        for(Ship boat:DataBase.ships){
+            double boatx = boat.getParameter(1);//anaship information
+            double boaty = boat.getParameter(2);
+            Iterator<Ship> shIt = boat.dangerList.iterator();
+            while(shIt.hasNext()){
+                Ship ship = shIt.next();
+                double shipx = ship.getParameter(1);//other ship information
+                double shipy = ship.getParameter(2);
+                if(Math.abs(boatx-shipx)>200 && Math.abs(boaty-shipy)>200){
+                    shIt.remove();
+                }
+            }
+        }
     }
     
 //    public class freshShow implements Runnable{

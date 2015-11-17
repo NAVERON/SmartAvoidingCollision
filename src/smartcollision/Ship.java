@@ -7,8 +7,10 @@ import java.util.LinkedList;
 
 public class Ship {
     private double x , y, s, c;
-    public LinkedList<DyObstacle> dangerList = new LinkedList<>();
+    public LinkedList<Ship> dangerList = new LinkedList<>();
+    public LinkedList<Double> sychronize = new LinkedList<>();
     public ArrayList<Point> shipTrack = new ArrayList<>();
+    public int Action = 0; // if 0 , no option , speed up 1//speed down 2//turn left 3//turn right 4
     
     private double stepx, stepy;
     private double c2r;
@@ -55,7 +57,6 @@ public class Ship {
             if(this.c>=360) this.c-=360;
         }
         if(this.c<0||this.c>360) System.err.println("course out of limits!!");
-        
         if(this.s<0||this.s>20) System.err.println("speed out of limits!!");
     }
     
@@ -65,47 +66,15 @@ public class Ship {
         stepy = s*Math.cos(c2r);
         x+=stepx;
         y-=stepy;
-        
-        shipTrack.add(new Point((int)x, (int)y));
+        if(shipTrack.size()>10000)
+            shipTrack.clear();
+        if(DataBase.tracklock)
+            shipTrack.add(new Point((int)x, (int)y));
         
         if(x<0) x = 1120;
         if(x>1120) x = 0;
         if(y<0) y = 800;
         if(y>800) y = 0;
     }
-    
-//    public void changeDirection(double c){//change direction should be step and step
-//        double enddirection = this.c + c;
-//        for(;;){
-//            if (this.c >= enddirection) break;
-//            this.c++;
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Ship.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        //0-360 limit
-//        while (this.c<0||this.c>=360) {
-//            if(this.c<0) this.c+=360;
-//            if(this.c>=360) this.c-=360;
-//        }
-//        if(this.c<0||this.c>360) System.err.println("course out of limits!!");
-//    }
-    
-//    public void changeSpeed(double s){//speed at 0-20 kn
-//        //adjust s
-//        double endspeed = this.s + s;
-//        for(;;){
-//            if (this.s >= endspeed) break;
-//            this.s++;
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Ship.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        if(this.s<0||this.s>20) System.err.println("speed out of limits!!");
-//    }
     
 }
