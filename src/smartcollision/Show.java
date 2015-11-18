@@ -19,7 +19,9 @@ public class Show extends javax.swing.JPanel{
     private double delMx, delMy;
     
     Point s = null, e = null;
-    String helpstr = "", infostr = "";
+    String helpStr = "", positionStr = "", speedStr = "", courseStr = "";//information
+    int time = 0;//auto hide need
+    int typeChange = 0;//change ship's type
     
     public Show() {
         initComponents();
@@ -27,7 +29,6 @@ public class Show extends javax.swing.JPanel{
     
     public void paintProperty(Graphics g) {//speed limit : 0-20
         if(DataBase.ships.isEmpty()) {
-            helpstr = "No Ship, No Thing to Show";
             return;
         }
         //getlast ship
@@ -97,7 +98,8 @@ public class Show extends javax.swing.JPanel{
         
     }
     
-    public void paintTrack(){
+    public void paintTrack(Graphics g){
+        g.setColor(Color.MAGENTA);
         for(Ship boat: DataBase.ships){
             for(Point p: boat.shipTrack)
                 g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
@@ -144,10 +146,17 @@ public class Show extends javax.swing.JPanel{
     public void printString(Graphics g){
         g.setColor(Color.BLACK);
         g.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
-        
+        //auto hide
+        time++;
+        if(time>30){
+            positionStr =""; speedStr =""; courseStr = "";
+            time = 0;
+        }
         g.drawString(mousex + " , " + mousey, 20, 680);//mouse position 820,  680
-        g.drawString(helpstr, 200, 680);//help position
-        g.drawString(infostr, 250, 25);//infomation position
+        g.drawString(helpStr, 200, 680);//help position
+        g.drawString(positionStr, 850, 25);//infomation showing
+        g.drawString(speedStr, 850, 50);
+        g.drawString(courseStr, 850, 75);
         
     }
     
@@ -159,8 +168,8 @@ public class Show extends javax.swing.JPanel{
         printString(g);
         paintProperty(g);
         paintShips(g);
-        if(DataBase.tracklock)
-            paintTrack();
+        if(!DataBase.tracklock)
+            paintTrack(g);
         if(s != null && e != null)
             paintLine(g);
     }
@@ -209,16 +218,16 @@ public class Show extends javax.swing.JPanel{
         Show.this.requestFocus();
         mousex = evt.getX();
         mousey = evt.getY();
-        helpstr = "'Left Click' Create Ships ,'Q' Create Ship, 'Right Click' Delete, 'L' Remove Voyage";
+        helpStr = "'Left Click & Drag' Create Ships, 'Right Click' Delete, 'Middle Button' Create Voyage";
     }//GEN-LAST:event_formMouseMoved
     
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
         // TODO add your handling code here:
         if(evt.getModifiers()==16){
-            helpstr = "Drag to Create Moving Ship";
+            helpStr = "Drag to Create Moving Ship, 'Right Double Click' Delete All Ship";
         }
         if(evt.getModifiers()==8){
-            helpstr = "Voyage start Point, Drag to End Point";
+            helpStr = "Voyage start Point, Drag to End Point, 'L' Remove Voyage";
             s = new Point(evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_formMousePressed
@@ -232,16 +241,20 @@ public class Show extends javax.swing.JPanel{
             double differentx = newx - mousex;
             double differenty = newy - mousey;
             double speed = Math.sqrt(Math.pow(differentx, 2) + Math.pow(differenty, 2))/10;
-            
-            ship = new Ship(mousex, mousey, speed, course);
+            //error ,type add
+            ship = new Ship(mousex, mousey, speed, course, typeChange);
             DataBase.ships.add(ship);
-            helpstr = "A Ship Exist";
-            infostr = "position : "+mousex+","+mousey+"   speed : "+(int)speed+"   course : "+(int)course;
+            
+            helpStr = "A Ship Exist";
+            positionStr = "Position : "+mousex+","+mousey;
+            speedStr = "Speed : "+(int)speed;
+            courseStr = "Course : "+(int)course;
+            time = 0;
         }
         if(evt.getModifiers()==8){
             e = new Point(evt.getX(), evt.getY());
             DataBase.linecourse = DataBase.CaculateRatio(s.getX(), s.getY(), e.getX(), e.getY());
-            helpstr = "A Voyage Exist";
+            helpStr = "A Voyage Exist";
         }
     }//GEN-LAST:event_formMouseReleased
     
@@ -260,7 +273,8 @@ public class Show extends javax.swing.JPanel{
                 for (Ship boat:DataBase.ships) {
                     boat.shipTrack.clear();
                 }
-                helpstr = "Delete All Ships";
+                helpStr = "Delete All Ships";
+                positionStr =""; speedStr =""; courseStr = "";
             }
             else{
                 Iterator<Ship> shIt = DataBase.ships.iterator();
@@ -269,8 +283,8 @@ public class Show extends javax.swing.JPanel{
                     disx = Math.abs(delMx-ship.getParameter(1));
                     disy = Math.abs(delMy-ship.getParameter(2));
                     dis = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));
-                    if(dis <= 20){
-                        helpstr = "Delete a Ship";
+                    if(dis <= 15){
+                        helpStr = "Delete a Ship";
                         shIt.remove();
                     }
                 }
@@ -281,20 +295,24 @@ public class Show extends javax.swing.JPanel{
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         
         if(DataBase.ships.isEmpty()){
-            helpstr = "Here has Nothing to Option";
             return;
         }
         
         ship = DataBase.ships.getLast();
         switch(evt.getKeyCode()){
-            case KeyEvent.VK_UP: helpstr = "Speed Up"; ship.giveValue(3, ship.getParameter(3)+1); break;
-            case KeyEvent.VK_DOWN: helpstr = "Speed Down"; ship.giveValue(3, ship.getParameter(3)-1); break;
-            case KeyEvent.VK_LEFT: helpstr = "Turning Left"; ship.giveValue(4, ship.getParameter(4)-1); break;
-            case KeyEvent.VK_RIGHT: helpstr = "Turning Right"; ship.giveValue(4, ship.getParameter(4)+1); break;
+            case KeyEvent.VK_UP: helpStr = "Speed Up"; ship.giveValue(3, ship.getParameter(3)+1); break;
+            case KeyEvent.VK_DOWN: helpStr = "Speed Down"; ship.giveValue(3, ship.getParameter(3)-1); break;
+            case KeyEvent.VK_LEFT: helpStr = "Turning Left"; ship.giveValue(4, ship.getParameter(4)-1); break;
+            case KeyEvent.VK_RIGHT: helpStr = "Turning Right"; ship.giveValue(4, ship.getParameter(4)+1); break;
             //function
-            case KeyEvent.VK_T:{//open or close track
-                helpstr = "Track Open/Lock";
+            case KeyEvent.VK_T:{//open or close track show
+                helpStr = "Track Show/Hide";
                 DataBase.tracklock = !DataBase.tracklock;
+                break;
+            }
+            case KeyEvent.VK_R:{//open or close track record
+                helpStr = "Track Record Open/Close";
+                DataBase.trackrecord = !DataBase.trackrecord;
                 break;
             }
             case KeyEvent.VK_I: {//get the information within mouse position
@@ -305,14 +323,16 @@ public class Show extends javax.swing.JPanel{
                     double disy = Math.abs(mousey-ship.getParameter(2));
                     double dis = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));
                     if(dis <= 20){
-                        infostr = "position : "+(int)ship.getParameter(1)+","+(int)ship.getParameter(2)+
-                                "   speed : "+(int)ship.getParameter(3)+
-                                "   course : "+(int)ship.getParameter(4);
+                        helpStr = "Get Ship Information";
+                        positionStr = "position : "+(int)ship.getParameter(1)+","+(int)ship.getParameter(2);
+                        speedStr = "Speed : "+(int)ship.getParameter(3);
+                        courseStr = "Course : "+(int)ship.getParameter(4);
+                        time = 0;
                     }
                 }
                 break;
             }
-            case KeyEvent.VK_C: infostr = ""; break; //clear ship's information
+            
         }
         
     }//GEN-LAST:event_formKeyPressed
@@ -322,18 +342,18 @@ public class Show extends javax.swing.JPanel{
         if(evt.getKeyCode() == KeyEvent.VK_L){
             s = null;
             e = null;
-            helpstr = "Clear Voyage";
+            helpStr = "Clear Voyage";
         }
         //pause and play
         if(evt.getKeyCode() == KeyEvent.VK_SPACE){
             if(!DataBase.pause){
-                helpstr = "Pause";
+                helpStr = "Pause";
                 printString(g);
                 repaint();
                 DataBase.pause = !DataBase.pause;
             }
             else{
-                helpstr = "Play";
+                helpStr = "Play";
                 DataBase.pause = !DataBase.pause;
             }
         }

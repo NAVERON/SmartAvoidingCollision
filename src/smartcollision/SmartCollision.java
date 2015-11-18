@@ -9,11 +9,10 @@ import javax.swing.JFrame;
 public class SmartCollision extends JFrame{
     
     public static void main(String[] args) {
+        //initialing
         JFrame frame = new JFrame();
         Show show = new Show();
         SmartCollision smartCollision = new SmartCollision();
-        //initialing
-        
         //setup frame and add panel
         frame.setSize(1100, 730);
         frame.add(show);
@@ -29,7 +28,7 @@ public class SmartCollision extends JFrame{
                         b.goAhead();
                     }
                     //analyse
-                    smartCollision.Action();
+                    //smartCollision.Action();//don't delete manual
                     
                     try {
                         Thread.sleep(100);
@@ -47,16 +46,33 @@ public class SmartCollision extends JFrame{
         }
     }
     
-    //DataBase db= new DataBase();
-    
     public void Action(){
         //action to avoid collision
         analyse();
         //Action and reset
         for(Ship dyship: DataBase.ships){
-            if(dyship.Action == 3){
-                dyship.giveValue(4, dyship.getParameter(4)+2);
-                dyship.Action = 0;
+            switch(dyship.Action){
+                case 1:{
+                    dyship.giveValue(3, dyship.getParameter(3)+2);
+                    dyship.Action = 0;
+                    break;
+                }
+                case 2:{
+                    dyship.giveValue(3, dyship.getParameter(3)-2);
+                    dyship.Action = 0;
+                    break;
+                }
+                case 3:{
+                    dyship.giveValue(4, dyship.getParameter(4)+2);
+                    dyship.Action = 0;
+                    break;
+                }
+                case 4:{
+                    dyship.giveValue(4, dyship.getParameter(4)-2);
+                    dyship.Action = 0;
+                    break;
+                }
+                //
             }
         }
         remove();
@@ -65,15 +81,16 @@ public class SmartCollision extends JFrame{
     public void analyse(){//need return flag signal
         //danger area add to arealist
         for(Ship boat: DataBase.ships){//distance analyse
+            int index = 0;
             for(Ship ship: DataBase.ships){
                 if(boat!=ship){
-                    if(Math.abs(boat.getParameter(1)-ship.getParameter(1))<100&&
-                            Math.abs(boat.getParameter(2)-ship.getParameter(2))<100){
+                    if(Math.abs(boat.getParameter(1)-ship.getParameter(1))<150&&
+                            Math.abs(boat.getParameter(2)-ship.getParameter(2))<150){
                         boat.dangerList.add(ship);
                     }
                 }
             }//analyse every ships and add to danger list
-            for(int i = 0;i<boat.dangerList.size();i++){
+            for(int i = 0;i<boat.dangerList.size();i++){//if danger is empty, then skip
                 Ship ship = boat.dangerList.get(i);
                 double boatx = boat.getParameter(1);//anaship information
                 double boaty = boat.getParameter(2);
@@ -85,11 +102,24 @@ public class SmartCollision extends JFrame{
                 double rp = rc - bc;//relation position
                 if(rp>180) rp = rp - 360;//port - // starboard + //limit 0-180
                 if(rp<-180) rp = 360 + rp;
-                boat.sychronize.add(rp);
+                boat.dataList.add(rp);
                 System.out.println(rp);
-                if(rp>0) boat.Action =3;
+                //analyse rp multiple
+                
             }
-            
+            for(int i = 0; i < boat.dataList.size(); i++){
+                if(boat.dataList.get(i) > 0)
+                    index = 3;
+            }
+            switch(index){
+                case 1: boat.Action = 1; break;
+                case 2: boat.Action = 2; break;
+                case 3: boat.Action = 3; break;
+                case 4: boat.Action = 4; break;
+                
+                default: boat.Action = 0; break;
+            }
+            index = 0;
         }
         
     }
@@ -104,7 +134,7 @@ public class SmartCollision extends JFrame{
                 Ship ship = shIt.next();
                 double shipx = ship.getParameter(1);//other ship information
                 double shipy = ship.getParameter(2);
-                if(Math.abs(boatx-shipx)>200 && Math.abs(boaty-shipy)>200){
+                if(Math.abs(boatx-shipx)>150 && Math.abs(boaty-shipy)>150){
                     shIt.remove();
                 }
             }

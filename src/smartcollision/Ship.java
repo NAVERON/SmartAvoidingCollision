@@ -8,14 +8,16 @@ import java.util.LinkedList;
 public class Ship {
     private double x , y, s, c;
     public LinkedList<Ship> dangerList = new LinkedList<>();
-    public LinkedList<Double> sychronize = new LinkedList<>();
+    public LinkedList<Double> dataList = new LinkedList<>();//multiple analyse
     public ArrayList<Point> shipTrack = new ArrayList<>();
+    
     public int Action = 0; // if 0 , no option , speed up 1//speed down 2//turn left 3//turn right 4
+    public int Type = 0;//if 0, normal ship, 渔船、操限船、失控船、限于吃水船 ...
     
     private double stepx, stepy;
     private double c2r;
     
-    public Ship(double x, double y, double s, double c){
+    public Ship(double x, double y, double s, double c, int type){
         this.x=x;
         this.y=y;
         if(s > 20)
@@ -23,6 +25,7 @@ public class Ship {
         else
             this.s = s;
         this.c=c;
+        this.Type = type;
     }
     public Ship() {
         this.x = DataBase.defaultx;
@@ -41,7 +44,7 @@ public class Ship {
         }
     }
     
-    public void giveValue(int index, double newValue){//change ship's parameter
+    public synchronized void giveValue(int index, double newValue){//change ship's parameter
         switch(index){
             case 1: x = newValue; break;
             case 2: y = newValue; break;
@@ -59,18 +62,23 @@ public class Ship {
         if(this.c<0||this.c>360) System.err.println("course out of limits!!");
         if(this.s<0||this.s>20) System.err.println("speed out of limits!!");
     }
-    
+    int count = 0;
     public void goAhead(){//position, course, speed test
         c2r = Math.toRadians(c);
         stepx = s*Math.sin(c2r);
         stepy = s*Math.cos(c2r);
-        x+=stepx;
-        y-=stepy;
+        giveValue(1, x+stepx);  //        x+=stepx;
+        giveValue(2, y-stepy);  //        y-=stepy;
+        
         if(shipTrack.size()>10000)
             shipTrack.clear();
-        if(DataBase.tracklock)
-            shipTrack.add(new Point((int)x, (int)y));
-        
+        count++;
+        if(count>5){
+            if(!DataBase.trackrecord){
+                shipTrack.add(new Point((int)x, (int)y));
+                count = 0;
+            }
+        }
         if(x<0) x = 1120;
         if(x>1120) x = 0;
         if(y<0) y = 800;

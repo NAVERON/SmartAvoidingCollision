@@ -7,14 +7,12 @@ public class DataBase {
     
     //default x, y, s, c    store Dyobstacles and Ships
     public static double defaultx = 300, defaulty = 400, defaults = 5, defaultc = 0, linecourse = 30;
-    
-    //public static LinkedList<DyObstacle> obstacle = new LinkedList<>();
     public static LinkedList<Ship> ships = new LinkedList<>();
     
     public static int dirpointradius = 10;
-    //public static int obstacleradius = 10;
     //flags
     public static boolean tracklock = false;
+    public static boolean trackrecord = false;
     public static boolean begin = false;
     public static boolean clear = false;
     public static boolean pause = false;
