@@ -19,7 +19,8 @@ public class Show extends javax.swing.JPanel{
     private double delMx, delMy;
     
     Point s = null, e = null;
-    String helpStr = "", positionStr = "", speedStr = "", courseStr = "";//information
+    String helpStr = "", positionStr = "", speedStr = "", courseStr = "", typeShow = "";//information
+    String typeStr = "Normal";
     int time = 0;//auto hide need
     int typeChange = 0;//change ship's type
     
@@ -71,31 +72,85 @@ public class Show extends javax.swing.JPanel{
     }
     
     public void paintShips(Graphics g){
-        g.setColor(Color.BLACK);
         double x, y, speed, c;
-        int linestartx, linestarty, lineendx, lineendy;
+        g.setColor(Color.BLACK);
         //////////////////////////////////////////////////////////////////////
         for(Ship b : DataBase.ships){
             x = b.getParameter(1);
             y = b.getParameter(2);
             speed = b.getParameter(3);
             c = Math.toRadians(b.getParameter(4));
-            
-            linestartx = (int)(x + 30*Math.sin(c));
-            linestarty = (int)(y - 30*Math.cos(c));
-            lineendx = (int) (linestartx + speed*Math.sin(c));
-            lineendy = (int) (linestarty - speed*Math.cos(c));
-            
-            int[] trianglex = {linestartx, (int)(x + 10*Math.sin(c+PI/2)), 
-                (int)(x + 10*Math.sin(c+3*PI/2))};
-            int[] triangley = {linestarty, (int)(y - 10*Math.cos(c+PI/2)), 
-                (int)(y - 10*Math.cos(c+3*PI/2))};
-            //drawbody and courseline
             if(b == DataBase.ships.getLast()) g.setColor(Color.RED);
-            g.drawPolygon(trianglex, triangley, 3);
-            g.drawLine(linestartx, linestarty, lineendx, lineendy);
+            switch(b.Type){
+                case 0: normalShip(x, y, speed, c,g); break;
+                case 1: sailingShip(x, y, speed, c,g); break;
+                case 2: fishingShip(x, y, speed, c,g); break;
+                case 3: outofControl(x, y, speed, c,g); break;
+                case 4: limitbyControl(x, y, speed, c,g); break;
+                case 5: limitbuDraft(x, y, speed, c,g); break;
+            }
         }
         
+    }
+    public void normalShip(double x, double y, double speed, double c,Graphics g){
+        int linestartx, linestarty, lineendx, lineendy;
+        linestartx = (int)(x + 20*Math.sin(c));
+        linestarty = (int)(y - 20*Math.cos(c));
+        lineendx = (int) (linestartx + speed*Math.sin(c));
+        lineendy = (int) (linestarty - speed*Math.cos(c));
+        
+        int[] trianglex = {linestartx, 
+            (int)(x + 7*Math.sin(c+PI/2)),
+            (int)(x-10*Math.sin(c)+7*Math.sin(c+PI/2)),
+            (int)(x-10*Math.sin(c)+7*Math.sin(c+3*PI/2)),
+            (int)(x + 7*Math.sin(c+3*PI/2))
+        };
+        int[] triangley = {linestarty, 
+            (int)(y - 7*Math.cos(c+PI/2)), 
+            (int)(y+10*Math.cos(c)-7*Math.cos(c+PI/2)),
+            (int)(y+10*Math.cos(c)-7*Math.cos(c+3*PI/2)),
+            (int)(y - 7*Math.cos(c+3*PI/2))
+        };
+        //drawbody and courseline
+        g.drawPolygon(trianglex, triangley, 5);
+        g.drawLine(linestartx, linestarty, lineendx, lineendy);
+    }
+    public void sailingShip(double x, double y, double speed, double c,Graphics g){
+        int[] sailx = {(int)(x + 15*Math.sin(c)),
+            (int)(x + 7*Math.sin(c+PI/2)),
+            (int)(x - 15*Math.sin(c)),
+            (int)(x + 7*Math.sin(c+3*PI/2))
+        };
+        int[] saily = {(int)(y - 15*Math.cos(c)),
+            (int)(y - 7*Math.cos(c+PI/2)),
+            (int)(y + 15*Math.cos(c)),
+            (int)(y - 7*Math.cos(c+3*PI/2))
+        };
+        g.drawPolygon(sailx, saily, 4);
+        g.drawLine(
+            (int)(x + 15*Math.sin(c)), (int)(y - 15*Math.cos(c)),
+            (int) (x + 15*Math.sin(c) + speed*Math.sin(c)), 
+            (int) (y - 15*Math.cos(c) - speed*Math.cos(c))
+        );
+    }
+    public void fishingShip(double x, double y, double speed, double c,Graphics g){
+        g.drawOval((int)(x-7.5), (int)(y-7.5), 15, 15);
+        g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
+    }
+    public void outofControl(double x, double y, double speed, double c,Graphics g){
+        g.drawRect((int)(x-7.5), (int)(y-7.5), 15, 15);
+        g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
+        g.drawLine((int)(x-7.5), (int)(y-7.5), (int)(x+7.5), (int)(y+7.5));
+        g.drawLine((int)(x-7.5), (int)(y+7.5), (int)(x+7.5), (int)(y-7.5));
+    }
+    public void limitbyControl(double x, double y, double speed, double c,Graphics g){
+        g.drawRect((int)(x-7.5), (int)(y-7.5), 15, 15);
+        g.drawOval((int)(x-7.5), (int)(y-7.5), 15, 15);
+        g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
+    }
+    public void limitbuDraft(double x, double y, double speed, double c, Graphics g){
+        g.drawRoundRect((int)(x-7.5), (int)(y-7.5), 15, 15, 5, 5);
+        g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
     }
     
     public void paintTrack(Graphics g){
@@ -149,15 +204,26 @@ public class Show extends javax.swing.JPanel{
         //auto hide
         time++;
         if(time>30){
-            positionStr =""; speedStr =""; courseStr = "";
+            positionStr =""; speedStr =""; courseStr = ""; typeShow = "";
             time = 0;
         }
         g.drawString(mousex + " , " + mousey, 20, 680);//mouse position 820,  680
-        g.drawString(helpStr, 200, 680);//help position
+        g.drawString(helpStr, 170, 680);//help position
         g.drawString(positionStr, 850, 25);//infomation showing
         g.drawString(speedStr, 850, 50);
         g.drawString(courseStr, 850, 75);
+        g.drawString(typeShow, 850, 100);
         
+        g.setColor(Color.BLUE);
+        switch(typeChange){
+            case 0: typeStr = "Normal";break;
+            case 1: typeStr = "Sailing";break;
+            case 2: typeStr = "Fishing";break;
+            case 3: typeStr = "Out of Control";break;
+            case 4: typeStr = "Limit by Control";break;
+            case 5: typeStr = "Limit by Draft";break;
+        }
+        g.drawString(typeStr, 920, 680);
     }
     
     @Override
@@ -244,11 +310,19 @@ public class Show extends javax.swing.JPanel{
             //error ,type add
             ship = new Ship(mousex, mousey, speed, course, typeChange);
             DataBase.ships.add(ship);
-            
-            helpStr = "A Ship Exist";
+            switch(ship.Type){
+                case 0: typeShow = "Normal";break;
+                case 1: typeShow = "Sailing";break;
+                case 2: typeShow = "Fishing";break;
+                case 3: typeShow = "Out of Control";break;
+                case 4: typeShow = "Limit by Control";break;
+                case 5: typeShow = "Limit by Draft";break;
+            }
+            helpStr = "A Ship Exist";//速度航向显示的精度问题
             positionStr = "Position : "+mousex+","+mousey;
             speedStr = "Speed : "+(int)speed;
             courseStr = "Course : "+(int)course;
+            typeShow = "Type : "+typeShow;
             time = 0;
         }
         if(evt.getModifiers()==8){
@@ -274,7 +348,7 @@ public class Show extends javax.swing.JPanel{
                     boat.shipTrack.clear();
                 }
                 helpStr = "Delete All Ships";
-                positionStr =""; speedStr =""; courseStr = "";
+                positionStr =""; speedStr =""; courseStr = ""; typeShow = "";
             }
             else{
                 Iterator<Ship> shIt = DataBase.ships.iterator();
@@ -293,6 +367,11 @@ public class Show extends javax.swing.JPanel{
     }//GEN-LAST:event_formMouseClicked
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_C){
+            typeChange++;
+            if(typeChange>5)
+                typeChange = 0;
+        }
         
         if(DataBase.ships.isEmpty()){
             return;
@@ -322,11 +401,20 @@ public class Show extends javax.swing.JPanel{
                     double disx = Math.abs(mousex-ship.getParameter(1));
                     double disy = Math.abs(mousey-ship.getParameter(2));
                     double dis = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));
-                    if(dis <= 20){
+                    if(dis <= 15){
                         helpStr = "Get Ship Information";
                         positionStr = "position : "+(int)ship.getParameter(1)+","+(int)ship.getParameter(2);
                         speedStr = "Speed : "+(int)ship.getParameter(3);
                         courseStr = "Course : "+(int)ship.getParameter(4);
+                        switch(ship.Type){
+                            case 0: typeShow = "Normal";break;
+                            case 1: typeShow = "Sailing";break;
+                            case 2: typeShow = "Fishing";break;
+                            case 3: typeShow = "Out of Control";break;
+                            case 4: typeShow = "Limit by Control";break;
+                            case 5: typeShow = "Limit by Draft";break;
+                        }
+                        typeShow = "Type : "+typeShow;
                         time = 0;
                     }
                 }

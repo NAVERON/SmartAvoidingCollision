@@ -8,11 +8,11 @@ import java.util.LinkedList;
 public class Ship {
     private double x , y, s, c;
     public LinkedList<Ship> dangerList = new LinkedList<>();
-    public LinkedList<Double> dataList = new LinkedList<>();//multiple analyse
+    public LinkedList<Double> dataList = new LinkedList<>();
     public ArrayList<Point> shipTrack = new ArrayList<>();
     
     public int Action = 0; // if 0 , no option , speed up 1//speed down 2//turn left 3//turn right 4
-    public int Type = 0;//if 0, normal ship, 渔船、操限船、失控船、限于吃水船 ...
+    public int Type = 0;//if 0, normal ship, sailing, fishing, out of control, limit by control, limit by draft
     
     private double stepx, stepy;
     private double c2r;
