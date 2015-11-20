@@ -67,8 +67,8 @@ public class Ship {
         c2r = Math.toRadians(c);
         stepx = s*Math.sin(c2r);
         stepy = s*Math.cos(c2r);
-        giveValue(1, x+stepx);  //        x+=stepx;
-        giveValue(2, y-stepy);  //        y-=stepy;
+        giveValue(1, x+stepx);
+        giveValue(2, y-stepy);
         
         if(shipTrack.size()>10000)
             shipTrack.clear();

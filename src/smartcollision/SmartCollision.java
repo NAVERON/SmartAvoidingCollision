@@ -25,9 +25,7 @@ public class SmartCollision extends JFrame{
                 for(Ship b: DataBase.ships){
                     b.goAhead();
                 }
-                //analyse
-                smartCollision.Action();//don't delete manual
-
+                smartCollision.Action();
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ex) {
@@ -36,62 +34,71 @@ public class SmartCollision extends JFrame{
                 
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(200);
             } catch (InterruptedException ex) {
                 Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        frame.setVisible(false);
+        System.exit(0);
     }
     
     public void Action(){
-        //action to avoid collision
         analyse();
         //Action and reset
+        if(DataBase.ships.size()!=0&&DataBase.ships.getLast().Action!=0) DataBase.danger = true;
+        else DataBase.danger = false;
+        
         for(Ship dyship: DataBase.ships){
             switch(dyship.Action){
                 case 1:{
-                    dyship.giveValue(3, dyship.getParameter(3)+1);
+                    dyship.giveValue(3, dyship.getParameter(3)+2);
                     dyship.Action = 0;
                     break;
                 }
                 case 2:{
-                    dyship.giveValue(3, dyship.getParameter(3)-1);
+                    dyship.giveValue(3, dyship.getParameter(3)-2);
                     dyship.Action = 0;
                     break;
                 }
                 case 3:{
-                    dyship.giveValue(4, dyship.getParameter(4)+1);
+                    dyship.giveValue(4, dyship.getParameter(4)+2);
                     dyship.Action = 0;
                     break;
                 }
                 case 4:{
-                    dyship.giveValue(4, dyship.getParameter(4)-1);
+                    dyship.giveValue(4, dyship.getParameter(4)-2);
                     dyship.Action = 0;
                     break;
                 }
                 //
             }
         }
-        remove();
+        //remove();
     }
     
-    public void analyse(){//need return flag signal
+    public void analyse(){
         //danger area add to arealist
-        for(Ship boat: DataBase.ships){//distance analyse
+        for(Ship boat: DataBase.ships){
             int index = 0;
             for(Ship ship: DataBase.ships){
                 if(boat!=ship){
                     if(Math.abs(boat.getParameter(1)-ship.getParameter(1))<200&&
                             Math.abs(boat.getParameter(2)-ship.getParameter(2))<200){
-                        for(Ship temp:boat.dangerList){//don't repaet add, error
-                            if(ship!=temp)
-                                boat.dangerList.add(ship);
-                        }
-                        if(boat.dangerList.size()==0){boat.dangerList.add(ship);}
+                        boat.dangerList.add(ship);
+//                        if(boat.dangerList.size()==0){boat.dangerList.add(ship);}
+//                        for(int i = 0;i<boat.dangerList.size();i++){
+//                            Ship temp = boat.dangerList.get(i);
+//                            if(ship == temp) break;
+//                            if(i>=boat.dangerList.size()-1){
+//                                boat.dangerList.add(ship);
+//                                break;//not need
+//                            }
+//                        }
                     }
                 }
-            }//analyse every ships and add to danger list
-            for(int i = 0;i<boat.dangerList.size();i++){//if danger is empty, then skip
+            }
+            for(int i = 0;i<boat.dangerList.size();i++){
                 Ship ship = boat.dangerList.get(i);
                 double boatx = boat.getParameter(1);//anaship information
                 double boaty = boat.getParameter(2);
@@ -103,34 +110,25 @@ public class SmartCollision extends JFrame{
                 double rp = rc - bc;//relation position
                 if(rp>180) rp = rp - 360;//port - // starboard + //limit 0-180
                 if(rp<-180) rp = 360 + rp;
-                if(boat.dangerList.size()>boat.dataList.size())//repeat add, error
-                    boat.dataList.add(rp);
-                //System.out.println(rp);
+                boat.dataList.add(i, rp);
                 //analyse rp multiple
-                
             }
-            System.out.println(boat.dataList.size());
-            for(int i = 0; i < boat.dataList.size(); i++){
+            for(int i = 0; i < boat.dataList.size(); i++){//analyse
                 if(boat.dataList.get(i) > 0)
                     index = 3;
             }
-            switch(index){
-                case 1: boat.Action = 1; break;
-                case 2: boat.Action = 2; break;
-                case 3: boat.Action = 3; break;
-                case 4: boat.Action = 4; break;
-                
-            }
-            index = 0;
+            boat.Action = index;
+            System.out.println(boat.dangerList.size());
+            boat.dangerList.clear();
+            boat.dataList.clear();
         }
         
     }
     
     public void remove(){
-        //remove safe objects
         for(int i = 0;i<DataBase.ships.size();i++){
             Ship boat = DataBase.ships.get(i);
-            double boatx = boat.getParameter(1);//anaship information
+            double boatx = boat.getParameter(1);
             double boaty = boat.getParameter(2);
             for(int j = 0;j<boat.dangerList.size();j++){
                 Ship ship = boat.dangerList.get(j);
@@ -138,33 +136,9 @@ public class SmartCollision extends JFrame{
                 double shipy = ship.getParameter(2);
                 if(Math.abs(boatx-shipx)>200 && Math.abs(boaty-shipy)>200){
                     boat.dangerList.remove(j);
-                    boat.dataList.remove(j);
                 }
             }
         }
     }
-    
-//    public class freshShow implements Runnable{
-//        Thread freshThread;
-//        
-//        public freshShow() {
-//            freshThread = new Thread(this, ""tt);
-//            freshThread.start();
-//        }
-//        
-//        @Override
-//        public void run(){
-//            while(!DataBase.begin){//begin flags
-//                
-//                show.repaint();
-//                ship.goAhead();
-//                try {
-//                    Thread.sleep(200);
-//                } catch (InterruptedException ex) {
-//                    Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        }
-//    }
     
 }

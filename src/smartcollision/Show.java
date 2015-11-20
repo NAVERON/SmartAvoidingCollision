@@ -21,8 +21,8 @@ public class Show extends javax.swing.JPanel{
     Point s = null, e = null;
     String helpStr = "", positionStr = "", speedStr = "", courseStr = "", typeShow = "";//information
     String typeStr = "Normal";
-    int time = 0;//auto hide need
-    int typeChange = 0;//change ship's type
+    int time = 0;
+    int typeChange = 0;
     
     public Show() {
         initComponents();
@@ -32,7 +32,6 @@ public class Show extends javax.swing.JPanel{
         if(DataBase.ships.isEmpty()) {
             return;
         }
-        //getlast ship
         Ship shiplast = DataBase.ships.getLast();
         
         if(!DataBase.danger)//adjust for show danger
@@ -116,6 +115,7 @@ public class Show extends javax.swing.JPanel{
         g.drawLine(linestartx, linestarty, lineendx, lineendy);
     }
     public void sailingShip(double x, double y, double speed, double c,Graphics g){
+        g.setColor(new Color(0, 191, 255));
         int[] sailx = {(int)(x + 15*Math.sin(c)),
             (int)(x + 7*Math.sin(c+PI/2)),
             (int)(x - 15*Math.sin(c)),
@@ -134,22 +134,26 @@ public class Show extends javax.swing.JPanel{
         );
     }
     public void fishingShip(double x, double y, double speed, double c,Graphics g){
+        g.setColor(new Color(0, 100, 0));
         g.drawOval((int)(x-7.5), (int)(y-7.5), 15, 15);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
     }
     public void outofControl(double x, double y, double speed, double c,Graphics g){
-        g.drawRect((int)(x-7.5), (int)(y-7.5), 15, 15);
+        g.setColor(Color.MAGENTA);
+        g.drawRect((int)(x-10), (int)(y-10), 20, 20);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
-        g.drawLine((int)(x-7.5), (int)(y-7.5), (int)(x+7.5), (int)(y+7.5));
-        g.drawLine((int)(x-7.5), (int)(y+7.5), (int)(x+7.5), (int)(y-7.5));
+        g.drawLine((int)(x-10), (int)(y-10), (int)(x+10), (int)(y+10));
+        g.drawLine((int)(x-10), (int)(y+10), (int)(x+10), (int)(y-10));
     }
     public void limitbyControl(double x, double y, double speed, double c,Graphics g){
-        g.drawRect((int)(x-7.5), (int)(y-7.5), 15, 15);
-        g.drawOval((int)(x-7.5), (int)(y-7.5), 15, 15);
+        g.setColor(new Color(0,0,205));
+        g.drawRect((int)(x-10), (int)(y-10), 20, 20);
+        g.drawOval((int)(x-10), (int)(y-10), 20, 20);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
     }
     public void limitbuDraft(double x, double y, double speed, double c, Graphics g){
-        g.drawRoundRect((int)(x-7.5), (int)(y-7.5), 15, 15, 5, 5);
+        g.setColor(new Color(139, 0, 139));
+        g.drawRoundRect((int)(x-10), (int)(y-10), 20, 20, 7, 7);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
     }
     
@@ -365,14 +369,16 @@ public class Show extends javax.swing.JPanel{
             }
         }
     }//GEN-LAST:event_formMouseClicked
-
+    
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         if(evt.getKeyCode() == KeyEvent.VK_C){
             typeChange++;
-            if(typeChange>5)
-                typeChange = 0;
+            if(typeChange>5) typeChange = 0;
         }
-        
+        if(evt.getKeyCode() == KeyEvent.VK_E){
+            DataBase.pause = true;
+            DataBase.begin = true;
+        }
         if(DataBase.ships.isEmpty()){
             return;
         }
@@ -403,7 +409,7 @@ public class Show extends javax.swing.JPanel{
                     double dis = Math.sqrt(Math.pow(disx, 2)+Math.pow(disy, 2));
                     if(dis <= 15){
                         helpStr = "Get Ship Information";
-                        positionStr = "position : "+(int)ship.getParameter(1)+","+(int)ship.getParameter(2);
+                        positionStr = "Position : "+(int)ship.getParameter(1)+","+(int)ship.getParameter(2);
                         speedStr = "Speed : "+(int)ship.getParameter(3);
                         courseStr = "Course : "+(int)ship.getParameter(4);
                         switch(ship.Type){
