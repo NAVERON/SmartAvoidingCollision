@@ -15,6 +15,8 @@ public class Show extends javax.swing.JPanel{
     private Graphics g;
     
     private double mousex, mousey;
+    private double dragx, dragy;
+    private double oldx, oldy;
     private double newx, newy;
     private double delMx, delMy;
     
@@ -165,28 +167,28 @@ public class Show extends javax.swing.JPanel{
         }
     }
     
-//    public void paintObstacle(Graphics g){
-//        double startx, starty, endx, endy;
-//        double speed, course;
-//        g.setColor(Color.BLACK);
-//        
-//        for(DyObstacle o : DataBase.obstacle){
-//            startx = o.getParameter(1);
-//            starty = o.getParameter(2);
-//            speed = o.getParameter(3);
-//            course = Math.toRadians(o.getParameter(4));
-//            //drawbody
-//            
-//            g.drawRoundRect((int)(startx-DataBase.obstacleradius), (int)(starty-DataBase.obstacleradius), 
-//                    2*DataBase.obstacleradius, 2*DataBase.obstacleradius, 5, 5);
-//            
-//            endx = startx + speed * Math.sin(course);
-//            endy = starty - speed * Math.cos(course);
-//            //drawline
-//            g.drawLine((int)startx, (int)starty, (int)endx, (int)endy);
-//            
-//        }
-//    }
+    public void paintObstacle(Graphics g){
+        double startx, starty, endx, endy;
+        double speed, course;
+        g.setColor(Color.BLACK);
+        
+        for(DyObstacle o : DataBase.obstacle){
+            startx = o.getParameter(1);
+            starty = o.getParameter(2);
+            speed = o.getParameter(3);
+            course = Math.toRadians(o.getParameter(4));
+            //drawbody
+            
+            g.drawRoundRect((int)(startx-DataBase.obstacleradius), (int)(starty-DataBase.obstacleradius), 
+                    2*DataBase.obstacleradius, 2*DataBase.obstacleradius, 5, 5);
+            
+            endx = startx + speed * Math.sin(course);
+            endy = starty - speed * Math.cos(course);
+            //drawline
+            g.drawLine((int)startx, (int)starty, (int)endx, (int)endy);
+            
+        }
+    }
     
     public void paintLine(Graphics g){
         //start point 
@@ -231,9 +233,8 @@ public class Show extends javax.swing.JPanel{
     }
     
     @Override
-    public void paint(Graphics g) {//paint will call repaint() method
+    public void paint(Graphics g) {
         super.paint(g);
-        //background first(depend on adjust) , speed and course
         this.g = g;//letout for paint
         printString(g);
         paintProperty(g);
@@ -258,6 +259,9 @@ public class Show extends javax.swing.JPanel{
         setNextFocusableComponent(this);
         setPreferredSize(new java.awt.Dimension(1100, 700));
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                formMouseDragged(evt);
+            }
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 formMouseMoved(evt);
             }
@@ -294,6 +298,8 @@ public class Show extends javax.swing.JPanel{
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
         // TODO add your handling code here:
         if(evt.getModifiers()==16){
+            oldx = evt.getX();
+            oldy = evt.getY();
             helpStr = "Drag to Create Moving Ship, 'Right Double Click' Delete All Ship";
         }
         if(evt.getModifiers()==8){
@@ -311,7 +317,6 @@ public class Show extends javax.swing.JPanel{
             double differentx = newx - mousex;
             double differenty = newy - mousey;
             double speed = Math.sqrt(Math.pow(differentx, 2) + Math.pow(differenty, 2))/10;
-            //error ,type add
             ship = new Ship(mousex, mousey, speed, course, typeChange);
             DataBase.ships.add(ship);
             switch(ship.Type){
@@ -322,7 +327,7 @@ public class Show extends javax.swing.JPanel{
                 case 4: typeShow = "Limit by Control";break;
                 case 5: typeShow = "Limit by Draft";break;
             }
-            helpStr = "A Ship Exist";//速度航向显示的精度问题
+            helpStr = "A Ship Exist";
             positionStr = "Position : "+mousex+","+mousey;
             speedStr = "Speed : "+(int)speed;
             courseStr = "Course : "+(int)course;
@@ -347,7 +352,6 @@ public class Show extends javax.swing.JPanel{
         if(evt.getModifiers()==4){
             if(evt.getClickCount() >= 2){
                 DataBase.ships.clear();
-                //delete track
                 for (Ship boat:DataBase.ships) {
                     boat.shipTrack.clear();
                 }
@@ -452,6 +456,13 @@ public class Show extends javax.swing.JPanel{
             }
         }
     }//GEN-LAST:event_formKeyReleased
+
+    private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
+        // TODO add your handling code here:
+        dragx = evt.getX();
+        dragy = evt.getY();
+        
+    }//GEN-LAST:event_formMouseDragged
                     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
