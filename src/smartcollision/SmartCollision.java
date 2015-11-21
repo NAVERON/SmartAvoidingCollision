@@ -19,8 +19,8 @@ public class SmartCollision extends JFrame{
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
         
-        while(!DataBase.begin){//end the game and clear panel
-            while (!DataBase.pause){//for pause and rest for a minutes
+        while(!DataBase.begin){
+            while (!DataBase.pause){
                 show.repaint();
                 for(Ship b: DataBase.ships){
                     b.goAhead();
@@ -48,7 +48,6 @@ public class SmartCollision extends JFrame{
         //Action and reset
         if(DataBase.ships.size()!=0&&DataBase.ships.getLast().Action!=0) DataBase.danger = true;
         else DataBase.danger = false;
-        
         for(Ship dyship: DataBase.ships){
             switch(dyship.Action){
                 case 1:{
@@ -62,12 +61,12 @@ public class SmartCollision extends JFrame{
                     break;
                 }
                 case 3:{
-                    dyship.giveValue(4, dyship.getParameter(4)+2);
+                    dyship.giveValue(4, dyship.getParameter(4)-2);
                     dyship.Action = 0;
                     break;
                 }
                 case 4:{
-                    dyship.giveValue(4, dyship.getParameter(4)-2);
+                    dyship.giveValue(4, dyship.getParameter(4)+2);
                     dyship.Action = 0;
                     break;
                 }
@@ -100,25 +99,27 @@ public class SmartCollision extends JFrame{
             }
             for(int i = 0;i<boat.dangerList.size();i++){
                 Ship ship = boat.dangerList.get(i);
-                double boatx = boat.getParameter(1);//anaship information
+                double boatx = boat.getParameter(1);
                 double boaty = boat.getParameter(2);
                 double bc = boat.getParameter(4);
-                //get relation position
-                double shipx = ship.getParameter(1);//other ship information
+                double shipx = ship.getParameter(1);
                 double shipy = ship.getParameter(2);
                 double rc = DataBase.CaculateRatio(boatx, boaty, shipx, shipy);
-                double rp = rc - bc;//relation position
+                double rp = rc - bc;
                 if(rp>180) rp = rp - 360;//port - // starboard + //limit 0-180
                 if(rp<-180) rp = 360 + rp;
                 boat.dataList.add(i, rp);
                 //analyse rp multiple
             }
-            for(int i = 0; i < boat.dataList.size(); i++){//analyse
-                if(boat.dataList.get(i) > 0)
+            for(int i = 0; i < boat.dataList.size(); i++){
+                if(Math.abs(boat.dataList.get(i)) > 30||boat.dataList.get(i)>292.5&&boat.dataList.get(i)<330)
+                    index = 4;
+                else if(boat.dataList.get(i)>30&&boat.dataList.get(i)<112.5)
                     index = 3;
+                else if(boat.dataList.get(i)>210&&boat.dataList.get(i)<292.5)
+                    index = 4;
             }
             boat.Action = index;
-            System.out.println(boat.dangerList.size());
             boat.dangerList.clear();
             boat.dataList.clear();
         }

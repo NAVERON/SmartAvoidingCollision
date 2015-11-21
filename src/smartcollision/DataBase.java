@@ -4,7 +4,6 @@ package smartcollision;
 import java.util.LinkedList;
 
 public class DataBase {
-    //default x, y, s, c    store Dyobstacles and Ships
     public static double defaultx = 300, defaulty = 400, defaults = 5, defaultc = 0, linecourse = 30;
     public static LinkedList<Ship> ships = new LinkedList<>();
     

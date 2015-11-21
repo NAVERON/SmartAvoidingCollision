@@ -117,7 +117,7 @@ public class Show extends javax.swing.JPanel{
         g.drawLine(linestartx, linestarty, lineendx, lineendy);
     }
     public void sailingShip(double x, double y, double speed, double c,Graphics g){
-        g.setColor(new Color(0, 191, 255));
+        //g.setColor(new Color(0, 191, 255));
         int[] sailx = {(int)(x + 15*Math.sin(c)),
             (int)(x + 7*Math.sin(c+PI/2)),
             (int)(x - 15*Math.sin(c)),
@@ -136,25 +136,25 @@ public class Show extends javax.swing.JPanel{
         );
     }
     public void fishingShip(double x, double y, double speed, double c,Graphics g){
-        g.setColor(new Color(0, 100, 0));
+        //g.setColor(new Color(0, 100, 0));
         g.drawOval((int)(x-7.5), (int)(y-7.5), 15, 15);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
     }
     public void outofControl(double x, double y, double speed, double c,Graphics g){
-        g.setColor(Color.MAGENTA);
+        //g.setColor(Color.MAGENTA);
         g.drawRect((int)(x-10), (int)(y-10), 20, 20);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
         g.drawLine((int)(x-10), (int)(y-10), (int)(x+10), (int)(y+10));
         g.drawLine((int)(x-10), (int)(y+10), (int)(x+10), (int)(y-10));
     }
     public void limitbyControl(double x, double y, double speed, double c,Graphics g){
-        g.setColor(new Color(0,0,205));
+        //g.setColor(new Color(0,0,205));
         g.drawRect((int)(x-10), (int)(y-10), 20, 20);
         g.drawOval((int)(x-10), (int)(y-10), 20, 20);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
     }
     public void limitbuDraft(double x, double y, double speed, double c, Graphics g){
-        g.setColor(new Color(139, 0, 139));
+        //g.setColor(new Color(139, 0, 139));
         g.drawRoundRect((int)(x-10), (int)(y-10), 20, 20, 7, 7);
         g.drawLine((int)x, (int)y, (int)(x+speed*Math.sin(c)), (int)(y-speed*Math.cos(c)));
     }

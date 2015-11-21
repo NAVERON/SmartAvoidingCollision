@@ -81,8 +81,8 @@ public class Ship {
         }
         if(x<0) x = 1120;
         if(x>1120) x = 0;
-        if(y<0) y = 800;
-        if(y>800) y = 0;
+        if(y<0) y = 740;
+        if(y>740) y = 0;
     }
     
 }
