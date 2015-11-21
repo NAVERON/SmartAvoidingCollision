@@ -39,7 +39,15 @@ public class SmartCollision extends JFrame{
                 Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        frame.setVisible(false);
+        while(DataBase.begin){
+            show.repaint();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        frame.dispose();
         System.exit(0);
     }
     

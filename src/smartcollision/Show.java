@@ -29,7 +29,6 @@ public class Show extends javax.swing.JPanel{
     public Show() {
         initComponents();
     }
-    
     public void paintProperty(Graphics g) {//speed limit : 0-20
         if(DataBase.ships.isEmpty()) {
             return;
@@ -71,7 +70,6 @@ public class Show extends javax.swing.JPanel{
         //color setup end
         g.fillOval((int)basepointx, (int)basepointy, radius, radius);
     }
-    
     public void paintShips(Graphics g){
         double x, y, speed, c;
         g.setColor(Color.BLACK);
@@ -162,8 +160,9 @@ public class Show extends javax.swing.JPanel{
     public void paintTrack(Graphics g){
         g.setColor(Color.MAGENTA);
         for(Ship boat: DataBase.ships){
-            for(Point p: boat.shipTrack)
+            for(Point p: boat.shipTrack){
                 g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
+            }
         }
     }
     
@@ -235,14 +234,19 @@ public class Show extends javax.swing.JPanel{
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        this.g = g;//letout for paint
-        printString(g);
-        paintProperty(g);
-        paintShips(g);
-        if(!DataBase.tracklock)
+        this.g = g;
+        if(!DataBase.begin){
+            printString(g);
+            paintProperty(g);
+            paintShips(g);
+            if(!DataBase.tracklock)
+                paintTrack(g);
+            if(s != null && e != null)
+                paintLine(g);
+        }
+        else{
             paintTrack(g);
-        if(s != null && e != null)
-            paintLine(g);
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -292,7 +296,7 @@ public class Show extends javax.swing.JPanel{
         Show.this.requestFocus();
         mousex = evt.getX();
         mousey = evt.getY();
-        helpStr = "'Left Click & Drag' Create Ships, 'Right Click' Delete, 'Middle Button' Create Voyage";
+        helpStr = "'Left Click & Drag' Create Ships, 'Right Click' Delete, 'C' Button Change Type";
     }//GEN-LAST:event_formMouseMoved
     
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
@@ -380,8 +384,8 @@ public class Show extends javax.swing.JPanel{
             if(typeChange>5) typeChange = 0;
         }
         if(evt.getKeyCode() == KeyEvent.VK_E){
-            DataBase.pause = true;
-            DataBase.begin = true;
+            DataBase.pause = !DataBase.pause;
+            DataBase.begin = !DataBase.begin;
         }
         if(DataBase.ships.isEmpty()){
             return;
