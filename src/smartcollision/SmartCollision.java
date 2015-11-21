@@ -93,15 +93,6 @@ public class SmartCollision extends JFrame{
                     if(Math.abs(boat.getParameter(1)-ship.getParameter(1))<200&&
                             Math.abs(boat.getParameter(2)-ship.getParameter(2))<200){
                         boat.dangerList.add(ship);
-//                        if(boat.dangerList.size()==0){boat.dangerList.add(ship);}
-//                        for(int i = 0;i<boat.dangerList.size();i++){
-//                            Ship temp = boat.dangerList.get(i);
-//                            if(ship == temp) break;
-//                            if(i>=boat.dangerList.size()-1){
-//                                boat.dangerList.add(ship);
-//                                break;//not need
-//                            }
-//                        }
                     }
                 }
             }
@@ -120,12 +111,10 @@ public class SmartCollision extends JFrame{
                 //analyse rp multiple
             }
             for(int i = 0; i < boat.dataList.size(); i++){
-                if(Math.abs(boat.dataList.get(i)) > 30||boat.dataList.get(i)>292.5&&boat.dataList.get(i)<330)
+                if(boat.dataList.get(i)>292.5||boat.dataList.get(i)<112.5)
                     index = 4;
-                else if(boat.dataList.get(i)>30&&boat.dataList.get(i)<112.5)
+                else if(boat.dataList.get(i)>112.5&&boat.dataList.get(i)<150)
                     index = 3;
-                else if(boat.dataList.get(i)>210&&boat.dataList.get(i)<292.5)
-                    index = 4;
             }
             boat.Action = index;
             boat.dangerList.clear();
