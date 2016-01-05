@@ -161,31 +161,8 @@ public class Show extends javax.swing.JPanel{
         g.setColor(Color.MAGENTA);
         for(Ship boat: DataBase.ships){
             for(Point p: boat.shipTrack){
-                g.fillOval((int)p.getX(), (int)p.getY(), 3, 3);
+                g.drawOval((int)p.getX(), (int)p.getY(), 4, 4);
             }
-        }
-    }
-    
-    public void paintObstacle(Graphics g){
-        double startx, starty, endx, endy;
-        double speed, course;
-        g.setColor(Color.BLACK);
-        
-        for(DyObstacle o : DataBase.obstacle){
-            startx = o.getParameter(1);
-            starty = o.getParameter(2);
-            speed = o.getParameter(3);
-            course = Math.toRadians(o.getParameter(4));
-            //drawbody
-            
-            g.drawRoundRect((int)(startx-DataBase.obstacleradius), (int)(starty-DataBase.obstacleradius), 
-                    2*DataBase.obstacleradius, 2*DataBase.obstacleradius, 5, 5);
-            
-            endx = startx + speed * Math.sin(course);
-            endy = starty - speed * Math.cos(course);
-            //drawline
-            g.drawLine((int)startx, (int)starty, (int)endx, (int)endy);
-            
         }
     }
     
@@ -229,12 +206,14 @@ public class Show extends javax.swing.JPanel{
             case 5: typeStr = "Limit by Draft";break;
         }
         g.drawString(typeStr, 920, 680);
+        g.drawString(String.valueOf(DataBase.ships.size()), 100, 160);
     }
     
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         this.g = g;
+        DataBase.g = g;
         if(!DataBase.begin){
             printString(g);
             paintProperty(g);

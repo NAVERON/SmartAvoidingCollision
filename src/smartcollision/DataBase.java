@@ -1,12 +1,14 @@
 
 package smartcollision;
 
+import java.awt.Graphics;
 import java.util.LinkedList;
 
 public class DataBase {
     public static double defaultx = 300, defaulty = 400, defaults = 5, defaultc = 0, linecourse = 30;
     public static LinkedList<Ship> ships = new LinkedList<>();
     public static int dirpointradius = 10;
+    public static Graphics g;
     //flags
     public static boolean tracklock = false;
     public static boolean trackrecord = true;

@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 
-public class SmartCollision extends JFrame{//截至到2015年11月21日，本程序完成，不再做大幅度修改——王玉龙
+public class SmartCollision extends JFrame{
     
     public static void main(String[] args) {
         //initialing
@@ -40,13 +40,15 @@ public class SmartCollision extends JFrame{//截至到2015年11月21日，本程
             }
         }
         while(DataBase.begin){
-            show.repaint();
+            //show.repaint();
+            show.paintTrack(DataBase.g);
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(SmartCollision.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        DataBase.ships.clear();
         frame.dispose();
         System.exit(0);
     }
@@ -111,9 +113,9 @@ public class SmartCollision extends JFrame{//截至到2015年11月21日，本程
                 //analyse rp multiple
             }
             for(int i = 0; i < boat.dataList.size(); i++){
-                if(boat.dataList.get(i)>292.5||boat.dataList.get(i)<112.5)
+                if(boat.dataList.get(i)>292.5||boat.dataList.get(i)<60)
                     index = 4;
-                else if(boat.dataList.get(i)>112.5&&boat.dataList.get(i)<150)
+                else if(boat.dataList.get(i)>90&&boat.dataList.get(i)<150)
                     index = 3;
             }
             boat.Action = index;

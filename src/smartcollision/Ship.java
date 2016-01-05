@@ -32,6 +32,7 @@ public class Ship {
         this.y = DataBase.defaulty;
         this.s = DataBase.defaults;
         this.c = DataBase.defaultc;
+        this.Type = 0;
     }
     
     public double getParameter(int index){
@@ -59,7 +60,6 @@ public class Ship {
             if(this.c<0) this.c+=360;
             if(this.c>=360) this.c-=360;
         }
-        if(this.c<0||this.c>360) System.err.println("course out of limits!!");
         if(this.s<0||this.s>20) System.err.println("speed out of limits!!");
     }
     int count = 0;
