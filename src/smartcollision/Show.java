@@ -7,8 +7,9 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Iterator;
+import javax.swing.JPanel;
 
-public class Show extends javax.swing.JPanel{
+public class Show extends JPanel{
     
     private Ship ship;
     private double PI = Math.PI;
@@ -211,7 +212,7 @@ public class Show extends javax.swing.JPanel{
     
     @Override
     public void paint(Graphics g) {
-        super.paint(g);
+        super.paint(g);         //如果在paint方法或者是类似绘制组件的方法中没有调用    super方法，会造成不能刷新的问题
         this.g = g;
         DataBase.g = g;
         if(!DataBase.begin){
