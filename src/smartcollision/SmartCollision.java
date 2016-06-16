@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 public class SmartCollision extends JFrame{   //截至到2015年11月21日，本程序完成，不再做大幅度修改-ERON
-
     
     public static void main(String[] args) {
         //initialing

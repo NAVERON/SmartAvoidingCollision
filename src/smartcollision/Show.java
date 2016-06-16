@@ -359,11 +359,11 @@ public class Show extends JPanel{
     }//GEN-LAST:event_formMouseClicked
     
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        if(evt.getKeyCode() == KeyEvent.VK_C){
+        if(evt.getKeyCode() == KeyEvent.VK_C){     //改变船舶类型
             typeChange++;
             if(typeChange>5) typeChange = 0;
         }
-        if(evt.getKeyCode() == KeyEvent.VK_E){
+        if(evt.getKeyCode() == KeyEvent.VK_E){    //结束程序
             DataBase.pause = !DataBase.pause;
             DataBase.begin = !DataBase.begin;
         }
@@ -378,12 +378,12 @@ public class Show extends JPanel{
             case KeyEvent.VK_LEFT: helpStr = "Turning Left"; ship.giveValue(4, ship.getParameter(4)-1); break;
             case KeyEvent.VK_RIGHT: helpStr = "Turning Right"; ship.giveValue(4, ship.getParameter(4)+1); break;
             //function
-            case KeyEvent.VK_T:{//open or close track show
+            case KeyEvent.VK_T:{//open or close track show     //打开或关闭轨迹显示
                 helpStr = "Track Show/Hide";
                 DataBase.tracklock = !DataBase.tracklock;
                 break;
             }
-            case KeyEvent.VK_R:{//open or close track record
+            case KeyEvent.VK_R:{//open or close track record      打开或关闭轨迹记录
                 helpStr = "Track Record Open/Close";
                 DataBase.trackrecord = !DataBase.trackrecord;
                 break;
@@ -443,7 +443,7 @@ public class Show extends JPanel{
 
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
         // TODO add your handling code here:
-        dragx = evt.getX();
+        dragx = evt.getX();       //这个功能有待下一个版本实现
         dragy = evt.getY();
         
     }//GEN-LAST:event_formMouseDragged
