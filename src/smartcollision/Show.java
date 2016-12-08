@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 public class Show extends JPanel{
     
     private Ship ship;
-    private double PI = Math.PI;
+    private final double PI = Math.PI;  //设为final不能更改
     private Graphics g;
     
     private double mousex, mousey;
