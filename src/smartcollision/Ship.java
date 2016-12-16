@@ -28,11 +28,19 @@ public class Ship {
     public float r = 0;//角速度
     public float relcourse = 0;  //变化的角度
     public boolean danger = false;  //指示本船是否危险状态
+    //判断是否存在偏差
+    public boolean courseDeviate = false;
+    public boolean trackDeviate = false;
+    //记录避碰前的相关信息
+    public boolean dangerBegin = false;//判断避碰的始末
+    public boolean dangerEnd = true;
+    public double orignCourse;//避碰前的航向
+    public Point orignPoint;//避碰前位置
     ///////////////////////////////////////////////////////////////////////
     public int Type = 0;//if 0, normal ship, sailing, fishing, out of control, limit by control, limit by draft
     
     private double stepx, stepy;
-    private double c2r;
+    private double c2r;  //注意三角函数参数都是弧度而不是角度
     
     public Ship(double x, double y, double s, double c, int type){
         this.x=x;
@@ -81,13 +89,28 @@ public class Ship {
     }
     int count = 0;
     public void goAhead(){//position, course, speed test
+        if (!danger && (courseDeviate||trackDeviate)) {  //在向前走之前，判断：  是否危险，是否航向偏离或者航迹偏离
+            //在无危险时，如果存在航迹或航向偏差，进行校正
+            if (courseDeviate ||trackDeviate) {
+                //如果存在航向偏差
+                int relCourse = (int) (this.getParameter(4) - orignCourse); //根据相减的值判断转向
+                int relTrack = (int) (DataBase.CaculateRatio(this.orignPoint.getX(), this.orignPoint.getY(), this.getParameter(1), this.getParameter(2))- this.getParameter(4));
+                if (relCourse<-180||(relCourse>0 && relCourse<180)) {
+                    //如果负值 <-180 左转, -180<course<0向右转
+                    this.Action = -10;
+                }
+                else if((relCourse>-180 && relCourse<0) || relCourse>180){
+                    this.Action = 10;
+                }
+            }
+        }
         c2r = Math.toRadians(c);
         stepx = s*Math.sin(c2r);
         stepy = s*Math.cos(c2r);
         giveValue(1, x+stepx);
         giveValue(2, y-stepy);
-        
-        if(shipTrack.size()>100){
+
+        if(shipTrack.size()>100){  //轨迹点记录的处理
             new Thread(){
                 @Override
                 public void run(){
@@ -101,8 +124,8 @@ public class Ship {
                         BufferedWriter bw = new BufferedWriter(fw);
                         for (int i = 0; i < shipTrack.size(); i++) {
                             Point p = shipTrack.get(i);
-                            fw.write(p.x+","+p.y);
-                            fw.write("\n\r");   //回车换行有点问题
+                            fw.write(p.x+","+p.y+"\n");
+                            //fw.write("\n\r");   //回车换行有点问题
                         }
                         bw.flush();
                         fw.flush();
@@ -114,15 +137,15 @@ public class Ship {
                     }
                 }
             }.start();
-            
         }
         count++;
-        if(count>5){
+        if(count>5){  //每隔5个点记录一次
             if(!DataBase.trackrecord){
                 shipTrack.add(new Point((int)x, (int)y));
                 count = 0;
             }
         }
+        //超出边界的处理，以前是进行边界反射，现在从另一边出来，以后应该考虑地球模型，旋转一圈，回到原地
         if(x<0) x = 1120;
         if(x>1120) x = 0;
         if(y<0) y = 740;

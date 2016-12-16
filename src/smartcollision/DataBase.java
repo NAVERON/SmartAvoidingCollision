@@ -17,10 +17,14 @@ public class DataBase {
     public static boolean danger = false;  //判断最新创建的对象是否危险状态
     
     /**caculate area
+     * <p>
+     * start x and start y  to end x and end y, caculate ratio of course ,based on up and clock direction
+     * </p>
      * @param start_x*
      * @param start_y*
      * @param end_x*
      * @param end_y*
+     * 
      * @return realCourse
       */
     
