@@ -14,9 +14,15 @@ public class DataBase {
     public static boolean trackrecord = true;
     public static boolean begin = false;
     public static boolean pause = false;
-    public static boolean danger = false;
+    public static boolean danger = false;  //判断最新创建的对象是否危险状态
     
-    /**********************************caculate area*****************************************/
+    /**caculate area
+     * @param start_x*
+     * @param start_y*
+     * @param end_x*
+     * @param end_y*
+     * @return realCourse
+      */
     
     public static double CaculateRatio(double start_x, double start_y, double end_x, double end_y){
         double differentx = end_x - start_x;

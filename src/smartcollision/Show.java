@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 public class Show extends JPanel{
@@ -373,10 +375,45 @@ public class Show extends JPanel{
         
         ship = DataBase.ships.getLast();
         switch(evt.getKeyCode()){
-            case KeyEvent.VK_UP: helpStr = "Speed Up"; ship.giveValue(3, ship.getParameter(3)+1); break;
-            case KeyEvent.VK_DOWN: helpStr = "Speed Down"; ship.giveValue(3, ship.getParameter(3)-1); break;
-            case KeyEvent.VK_LEFT: helpStr = "Turning Left"; ship.giveValue(4, ship.getParameter(4)-1); break;
-            case KeyEvent.VK_RIGHT: helpStr = "Turning Right"; ship.giveValue(4, ship.getParameter(4)+1); break;
+            //2016.12.8: 增加KT系数，不再控制角度，只改变舵角
+            case KeyEvent.VK_UP: helpStr = "Speed Up"; ship.giveValue(3, ship.getParameter(3)+4); break;
+            case KeyEvent.VK_DOWN: helpStr = "Speed Down"; ship.giveValue(3, ship.getParameter(3)-4); break;
+            case KeyEvent.VK_LEFT: helpStr = "Turning Left"; ship.giveValue(4, ship.getParameter(4)-4); break;
+            case KeyEvent.VK_RIGHT: helpStr = "Turning Right"; ship.giveValue(4, ship.getParameter(4)+4); break;
+            /*
+                                case KeyEvent.VK_UP: {
+                                    helpStr = "Speed Up";
+                                    ship.giveValue(3, ship.getParameter(3)+1); break;
+                                }
+                                case KeyEvent.VK_DOWN: {
+                                    helpStr = "Speed Down";
+                                    ship.giveValue(3, ship.getParameter(3)-1); break;
+                                }
+                                //假定船舶参数已知： K= 0.05 T= 10
+                                case KeyEvent.VK_LEFT: {   //5舵角
+                                    helpStr = "Turning Left";
+                                    /*double rt, r, theta = 0;
+                                for (int t = 0; t < 10; t++) {
+                                    rt = 0.005*5*Math.exp(-t/10);  //角加速度
+                                    theta = 0.05*5*(t - 10 + 10*Math.exp(-t/10));  //转首角
+                                    ship.giveValue(4, ship.getParameter(4) - theta);
+                                    try {
+                                        Thread.sleep(10);
+                                    } catch (InterruptedException ex) {
+                                        Logger.getLogger(Show.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                                 
+                    //                ship.Action = -5;
+                                    ship.giveValue(4, ship.getParameter(4)-1);
+                                    break;
+                                }
+                                case KeyEvent.VK_RIGHT:{
+                                    helpStr = "Turning Right"; 
+                                    ship.giveValue(4, ship.getParameter(4)+1); break;
+                    //                ship.Action = 5;
+                                }
+            */
             //function
             case KeyEvent.VK_T:{//open or close track show     //打开或关闭轨迹显示
                 helpStr = "Track Show/Hide";
@@ -418,7 +455,7 @@ public class Show extends JPanel{
         }
         
     }//GEN-LAST:event_formKeyPressed
-
+    
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
         //delete voyage
         if(evt.getKeyCode() == KeyEvent.VK_L){
@@ -440,14 +477,14 @@ public class Show extends JPanel{
             }
         }
     }//GEN-LAST:event_formKeyReleased
-
+    
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
         // TODO add your handling code here:
         dragx = evt.getX();       //这个功能有待下一个版本实现
         dragy = evt.getY();
         
     }//GEN-LAST:event_formMouseDragged
-                    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     
