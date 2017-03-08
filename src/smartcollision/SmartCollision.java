@@ -10,6 +10,8 @@ public class SmartCollision extends JFrame{   //截至到2015年11月21日，本
     //重新更改架构，将船舶自身的动态属性和静态属性分开
     //比如船舶的位置可以放在ship类中，但是操纵性能    ，    风流信息的影响，   避碰规则应该以导入的方式注入船舶
     //增加系统的粘度，增加可更改性能
+    //程序中现在最重要的问题是规则的制定，何时进行避碰，DCPA、TCPA判断
+    //碰撞的判断，如果碰撞后，在起先时间，实施救援任务，在一定时间后可以生成沉船标志
     public static void main(String[] args) {
         //initialing
         JFrame frame = new JFrame();
@@ -92,7 +94,7 @@ public class SmartCollision extends JFrame{   //截至到2015年11月21日，本
             dyship.dangerList.clear();
             dyship.dataList.clear();
             dyship.danger = false;
-            dyship.dangerBegin = false;
+            //dyship.dangerBegin = false;
         } //remove();
     }
     
@@ -109,13 +111,13 @@ public class SmartCollision extends JFrame{   //截至到2015年11月21日，本
                         //避碰开始
                         boat.dangerBegin = true;
                         //boat.dangerEnd = false;
-                        System.out.println("我是处于危险状态");
+                        //System.out.println("我是处于危险状态");
                     }
                 }
             }
             //分析船舶当前的航向偏移和航迹偏移
-            if (!boat.danger) {  //如果分析时危险链表是空的，表示本次分析无危险
-                System.out.println("我是安全的");
+            //if (boat.dangerBegin) {  //如果分析时危险链表是空的，表示本次分析无危险
+                //System.out.println("我是安全的");
                 //boat.dangerBegin = false;  //避碰结束
                 //boat.dangerEnd = true;
                 if (boat.dangerBegin && boat.dangerEnd) {  //第一次出现危险  记录航向和位置，随后不进行记录
@@ -123,20 +125,15 @@ public class SmartCollision extends JFrame{   //截至到2015年11月21日，本
                     //2  true  false
                     //危险过去
                     //3  false  false
+                    System.out.println("开始避碰，记录原始参数");
                     boat.orignCourse = boat.getParameter(4);
                     boat.orignPoint.setLocation(boat.getParameter(1), boat.getParameter(2));
+                    //boat.dangerEnd = false;
+                    
                     boat.dangerEnd = false;
                 }
-                //在这里只分析不动作
-                if (!boat.dangerBegin && !boat.dangerEnd) { //1  false  true  不计算
-                                                            //2  false  true 危险中，不计算
-                                                            //危险过去
-                                                            //3  true  true 计算
-                                                            //危险又来了
-                                                            //4  false  true 不计算
-                                                            //
-                                                            //直到恢复到原航迹，设置dangerend为true
-                                                            //此时无危险的话 true  false  不计算
+                if (!boat.dangerBegin && boat.dangerEnd) {
+                    System.out.println("判断偏航情况");
                     if (Math.abs(boat.getParameter(4) - boat.orignCourse) > 5) {
                         boat.courseDeviate = true;
                     } else {
@@ -151,11 +148,38 @@ public class SmartCollision extends JFrame{   //截至到2015年11月21日，本
                     }
                     else{
                         boat.trackDeviate = false;
-                        boat.dangerEnd = true;
                     }
                 }
                 
-            }
+                //在这里只分析不动作
+//                if (boat.dangerBegin && !boat.dangerEnd) { //1  false  true  不计算
+//                                                            //2  false  true 危险中，不计算
+//                                                            //危险过去
+//                                                            //3  true  true 计算
+//                                                            //危险又来了
+//                                                            //4  false  true 不计算
+//                                                            //
+//                                                            //直到恢复到原航迹，设置dangerend为true
+//                                                            //此时无危险的话 true  false  不计算
+//                    System.out.println("判断偏航情况");
+//                    if (Math.abs(boat.getParameter(4) - boat.orignCourse) > 5) {
+//                        boat.courseDeviate = true;
+//                    } else {
+//                        boat.courseDeviate = false;
+//                    }
+//                    if (Math.abs(
+//                            (DataBase.CaculateRatio(boat.orignPoint.getX(), boat.orignPoint.getY(), boat.getParameter(1), boat.getParameter(2))
+//                                    - boat.getParameter(4)
+//                            )
+//                    )>5) {  //判断偏航
+//                        boat.trackDeviate = true;
+//                    }
+//                    else{
+//                        boat.trackDeviate = false;
+//                    }
+//                }
+                
+            //}
             for(int i = 0;i<boat.dangerList.size();i++){
                 Ship ship = boat.dangerList.get(i);
                 double boatx = boat.getParameter(1);
@@ -181,6 +205,7 @@ public class SmartCollision extends JFrame{   //截至到2015年11月21日，本
                     index = 5;
                 }else if (temp>10&&temp<30) {
                     index = (int) Math.abs(temp);
+                    //index = 20;
                 }else if (temp>30&&temp<67.5) {
                     index = 30;
                 }else if (temp>67.5&&temp<112.5) {
