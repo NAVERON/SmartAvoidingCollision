@@ -8,5 +8,5 @@ need solve:
   2. path planning
   3. state analyse, geometric analysis
 
-船舶避碰模拟的第二个版本
+## 船舶避碰模拟的第二个版本
 还需要很多改进,继续学习
